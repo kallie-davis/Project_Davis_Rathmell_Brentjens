@@ -31,19 +31,19 @@ View(Erie_data)
 #   na.omit(Extracted_PC_ugL.1)
 
 class(Erie_data$Temp_C)
-Erie_data$Temp_C <- as.numeric(Erie_data$Temp_C)
+Erie_data$Temp_C <- as.numeric(as.character(Erie_data$Temp_C))
 
 class(Erie_data$DO_mgL.1)
-Erie_data$DO_mgL.1 <- as.numeric(Erie_data$DO_mgL.1)
+Erie_data$DO_mgL.1 <- as.numeric(as.character(Erie_data$DO_mgL.1))
 
 class(Erie_data$Dissolved_Microcystin_ugL.1)
 Erie_data$Dissolved_Microcystin_ugL.1 <- 
-  as.numeric(Erie_data$Dissolved_Microcystin_ugL.1)
+  as.numeric(as.character(Erie_data$Dissolved_Microcystin_ugL.1))
 
 class(Erie_data$Extracted_CHLa_ugL.1)
 
 class(Erie_data$Extracted_PC_ugL.1)
-Erie_data$Extracted_PC_ugL.1 <- as.numeric(Erie_data$Extracted_PC_ugL.1)
+Erie_data$Extracted_PC_ugL.1 <- as.numeric(as.character(Erie_data$Extracted_PC_ugL.1))
 
 Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category, 
                                Erie_data$Temp_C, Erie_data$DO_mgL.1,
@@ -53,11 +53,14 @@ Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category,
 
 colnames(Erie_data_subset) <- c("Depth_category", "Temp", "DO", "MC", "Chla", "PC")
 
-Erie_data_2 <- data_frame(Erie_data$Temp_C, Erie_data$DO_mgL.1,
+Erie_data_cor <- data_frame(Erie_data$Temp_C, Erie_data$DO_mgL.1,
                           Erie_data$Dissolved_Microcystin_ugL.1,
                           Erie_data$Extracted_CHLa_ugL.1, 
                           Erie_data$Extracted_PC_ugL.1)
-View(Erie_data_2)
+
+colnames(Erie_data_cor) <- c("Temp", "DO", "MC", "Chla", "PC")
+
+View(Erie_data_cor)
 
 Erie_data_surface <- Erie_data_subset %>%
   filter(Depth_category=="Surface")
@@ -68,6 +71,10 @@ Erie_data_bottom <- Erie_data_subset %>%
 
 
 ##GLMs
+Erie_cor <- cor(Erie_data_cor)
+corrplot(Erie_cor, method = "ellipse")
+corrplot.mixed(Erie_cor, upper = "ellipse")
+
 Erie_chla_lm <- lm(data=Erie_data, Extracted_CHLa_ugL.1 ~ Temp_C)
 summary(Erie_chla_lm)
 
@@ -98,50 +105,81 @@ Erie_do_b_lm <- lm(data=Erie_data_bottom, DO ~ Temp)
 summary(Erie_do_b_lm)
 
 
-Erie_cor <- cor(Erie_data_2)
-corrplot(Erie_cor, method = "ellipse", mar=c(1,1,1,1))
-corrplot.mixed(Erie_cor, upper = "ellipse", 
-               mar=c(1,1,1,1))
+##surface vs. bottom comparison
+surface_bottom_temp <- t.test(data=Erie_data_subset, Temp ~ Depth_category)
+surface_bottom_temp
 
+
+surface_bottom_chla <- t.test(data=filter(Erie_data_subset, !Depth_category=="Scum"), Chla ~ Depth_category)
+surface_bottom_chla
+
+chla_boxplot <- ggplot(data=filter(Erie_data_subset, !Depth_category=="Scum"), aes(x=Depth_category, y=Chla)) +
+  geom_boxplot()
+chla_boxplot
+
+surface_bottom_mc <- t.test(data=filter(Erie_data_subset, !Depth_category=="Scum"), MC ~ Depth_category)
+surface_bottom_mc
+
+surface_bottom_do <- t.test(data=filter(Erie_data_subset, !Depth_category=="Scum"), DO ~ Depth_category)
+surface_bottom_do
+
+do_boxplot <- ggplot(data=filter(Erie_data_subset, !Depth_category=="Scum"), aes(x=Depth_category, y=DO)) +
+  geom_boxplot()
+do_boxplot
 
 
 ##plotting data
 chla_plot <- ggplot(data=Erie_data, aes(x=Temp_C, y=Extracted_CHLa_ugL.1)) +
   geom_point() +
-  geom_smooth(method=lm, se=F) +
+  geom_smooth(method=lm, se=F, color="#009E73") +
   ylim(0, 300) +
+  #scale_y_continuous(trans='log10') +
   xlab(expression("Temperature" ~ "("*degree*C*")")) + 
   ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))
 chla_plot
 
 chla_s_plot <- ggplot(data=Erie_data_surface, aes(x=Temp, y=Chla)) +
   geom_point() +
-  geom_smooth(method=lm, se=F) +
-  ylim(0, 300)
+  geom_smooth(method=lm, se=F, color="#009E73") +
+  ylim(0, 300) +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))
 chla_s_plot
 
 
 mc_plot <- ggplot(data=Erie_data, aes(x=Temp_C, y=Dissolved_Microcystin_ugL.1)) +
   geom_point() +
-  geom_smooth(method=lm, se=F) +
+  geom_smooth(method=lm, se=F, color="tomato") +
+  ylim(0, 1.25) +
   xlab(expression("Temperature" ~ "("*degree*C*")")) + 
-  ylab(expression("Dissolved microcystin" ~ "("*mu*"g/L)"))
+  ylab(expression("Dissolved microcystin" ~ "("*mu*"g/L)")) 
 mc_plot
 
 mc_s_plot <- ggplot(data=Erie_data_surface, aes(x=Temp, y=MC)) +
   geom_point() +
-  geom_smooth(method=lm, se=F)
+  geom_smooth(method=lm, se=F, color="tomato") +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Dissolved microcystin" ~ "("*mu*"g/L)")) 
 mc_s_plot
 
 
 do_plot <- ggplot(data=Erie_data, aes(x=Temp_C, y=DO_mgL.1)) +
   geom_point() +
-  geom_smooth(method=lm, se=F) +
+  geom_smooth(method=lm, se=F, color="deepskyblue3") +
   xlab(expression("Temperature" ~ "("*degree*C*")")) + 
   ylab("Dissolved oxygen (mg/L)")
 do_plot
 
 do_s_plot <- ggplot(data=Erie_data_surface, aes(x=Temp, y=DO)) +
   geom_point() +
-  geom_smooth(method=lm, se=F)
+  geom_smooth(method=lm, se=F, color="deepskyblue3") +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab("Dissolved oxygen (mg/L)")
 do_s_plot
+
+do_b_plot <- ggplot(data=Erie_data_bottom, aes(x=Temp, y=DO)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F, color="deepskyblue3") +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab("Dissolved oxygen (mg/L)")
+do_b_plot
