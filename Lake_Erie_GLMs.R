@@ -183,3 +183,32 @@ do_b_plot <- ggplot(data=Erie_data_bottom, aes(x=Temp, y=DO)) +
   xlab(expression("Temperature" ~ "("*degree*C*")")) + 
   ylab("Dissolved oxygen (mg/L)")
 do_b_plot
+
+
+##2012-2018 Data
+Erie_Data_2012_2018 <- 
+  read.csv("./lake_erie_habs_field_sampling_results_2012_2018_v2.csv",
+           check.names = F)
+
+colnames(Erie_Data_2012_2018) <- sub(" ", ".", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("[()]", ".", colnames(Erie_Data_2012_2018))
+
+View(Erie_Data_2012_2018)
+colnames(Erie_Data_2012_2018)
+
+Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
+                                  Erie_Data_2012_2018$`Dissolved.Organic Carbon .mg/L.`,
+                                  Erie_Data_2012_2018$`Urea..<b5>g N/L.`,
+                                  Erie_Data_2012_2018$`Nitrate.+ Nitrite .mg N/L.`,
+                                  Erie_Data_2012_2018$`Ammonia..<b5>g N/L.`,
+                                  Erie_Data_2012_2018$`Soluble.Reactive Phosphorus .<b5>g P/L.`,
+                                  Erie_Data_2012_2018$`Total.Dissolved Phosphorus .<b5>g P/L.`,
+                                  Erie_Data_2012_2018$`Total.Phosphorus .<b5>g P/L.`,
+                                  Erie_Data_2012_2018$`Extracted.Chlorophyll a .<b5>g/L.`,
+                                  Erie_Data_2012_2018$`Extracted.Phycocyanin .<b5>g/L.`,
+                                  Erie_Data_2012_2018$`Dissolved.Microcystin .<b5>g/L.`,
+                                  Erie_Data_2012_2018$`CTD.Dissolved Oxygen .mg/L.`,
+                                  Erie_Data_2012_2018$Site,
+                                  Erie_Data_2012_2018$`Sample.Depth .category.`,
+                                  Erie_Data_2012_2018$`Sample.Temperature .<b0>C.`,
+                                  Erie_Data_2012_2018$`CTD.Temperature .<b0>C.`)
