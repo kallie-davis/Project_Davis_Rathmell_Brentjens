@@ -122,11 +122,18 @@ Erie_data_surface_ext <- Erie_Data_2012_2018 %>%
             mean_temp = mean(CTD.Temperature.b0C),
             mean_mc = mean(Dissolved.Microcystin.b5g.L), 
             mean_do = mean(CTD.Dissolved.Oxygen.mg.L)) %>%
-  mutate(year = year(Date))
+  mutate(year = year(Date)) %>%
+  mutate(month = month(Date)) %>%
+  mutate(day = day(Date)) %>%
+  month_day=paste(month,"/", day)
 View(Erie_data_surface_ext)
 
+class(Erie_data_surface_ext$month)
+#Erie_data_surface_ext$month <- as.Date(Erie_data_surface_ext$month)
+
 chla_plot_ext <- ggplot() +
-  geom_line(data=filter(Erie_data_surface_ext, year=="2017"), aes(x=Date, y=mean_chla))
+  geom_line(data=filter(Erie_data_surface_ext, year=="2014"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_surface_ext, year=="2012"), aes(x=month, y=mean_chla))
 
 temp_plot_ext <- ggplot() +
   geom_line(data=filter(Erie_data_surface_ext, year=="2017"), aes(x=Date, y=mean_temp))
