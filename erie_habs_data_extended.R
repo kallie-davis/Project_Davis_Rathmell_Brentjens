@@ -45,8 +45,8 @@ Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
 #Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%d/%m/%Y")
 ##date conversion not working?
 
-write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_processed")
-erie_extended_processed <- read.csv("./Data/Processed/Erie_2012_2018_processed")
+write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_processed.csv")
+erie_extended_processed <- read.csv("./Data/Processed/Erie_2012_2018_processed.csv")
 View(erie_extended_processed)
 
 ##change to processed dataset
