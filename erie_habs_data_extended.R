@@ -1,6 +1,6 @@
 ##2012-2018 Data
 Erie_Data_2012_2018 <- 
-  read.csv("./lake_erie_habs_field_sampling_results_2012_2018_v2.csv",
+  read.csv("./Data/Raw/lake_erie_habs_field_sampling_results_2012_2018_v2.csv",
            check.names = F)
 
 colnames(Erie_Data_2012_2018) <- gsub(" ", ".", colnames(Erie_Data_2012_2018))
@@ -45,6 +45,11 @@ Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
 #Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%d/%m/%Y")
 ##date conversion not working?
 
+write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_processed")
+erie_extended_processed <- read.csv("./Data/Processed/Erie_2012_2018_processed")
+View(erie_extended_processed)
+
+##change to processed dataset
 ##?????
 Erie_chla_lm_lt <- lm(data=Erie_Data_2012_2018, Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
 summary(Erie_chla_lm_lt)
