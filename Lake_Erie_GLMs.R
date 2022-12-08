@@ -16,8 +16,7 @@ theme_set(ggplot_theme)
 
 
 ##load data
-Erie_data <- read.csv("./2022_WLE_Weekly_Datashare_CSV.csv",
-                      stringsAsFactors = T)
+Erie_data <- read.csv("./Data/Raw/2022_WLE_Weekly_Datashare_CSV.csv")
 View(Erie_data)
 
 
@@ -31,19 +30,19 @@ View(Erie_data)
 #   na.omit(Extracted_PC_ugL.1)
 
 class(Erie_data$Temp_C)
-Erie_data$Temp_C <- as.numeric(as.character(Erie_data$Temp_C))
+Erie_data$Temp_C <- as.numeric(Erie_data$Temp_C)
 
 class(Erie_data$DO_mgL.1)
-Erie_data$DO_mgL.1 <- as.numeric(as.character(Erie_data$DO_mgL.1))
+Erie_data$DO_mgL.1 <- as.numeric(Erie_data$DO_mgL.1)
 
 class(Erie_data$Dissolved_Microcystin_ugL.1)
 Erie_data$Dissolved_Microcystin_ugL.1 <- 
-  as.numeric(as.character(Erie_data$Dissolved_Microcystin_ugL.1))
+  as.numeric(Erie_data$Dissolved_Microcystin_ugL.1)
 
 class(Erie_data$Extracted_CHLa_ugL.1)
 
 class(Erie_data$Extracted_PC_ugL.1)
-Erie_data$Extracted_PC_ugL.1 <- as.numeric(as.character(Erie_data$Extracted_PC_ugL.1))
+Erie_data$Extracted_PC_ugL.1 <- as.numeric(Erie_data$Extracted_PC_ugL.1)
 
 Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category, 
                                Erie_data$Temp_C, Erie_data$DO_mgL.1,
@@ -53,19 +52,24 @@ Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category,
 
 colnames(Erie_data_subset) <- c("Depth_category", "Temp", "DO", "MC", "Chla", "PC")
 
-Erie_data_cor <- data_frame(Erie_data$Temp_C, Erie_data$DO_mgL.1,
-                          Erie_data$Dissolved_Microcystin_ugL.1,
-                          Erie_data$Extracted_CHLa_ugL.1, 
-                          Erie_data$Extracted_PC_ugL.1)
+write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
+Erie_data_processed <- read.csv("./Data/Processed/Erie_2022_processed.csv")
+View(Erie_data_processed)
+
+Erie_data_cor <- data_frame(Erie_data_processed$Temp, 
+                            Erie_data_processed$DO,
+                          Erie_data_processed$MC,
+                          Erie_data_processed$Chla, 
+                          Erie_data_processed$PC)
 
 colnames(Erie_data_cor) <- c("Temp", "DO", "MC", "Chla", "PC")
 
 View(Erie_data_cor)
 
-Erie_data_surface <- Erie_data_subset %>%
+Erie_data_surface <- Erie_data_processed %>%
   filter(Depth_category=="Surface")
 
-Erie_data_bottom <- Erie_data_subset %>%
+Erie_data_bottom <- Erie_data_processed %>%
   filter(Depth_category=="Bottom")
 
 
@@ -75,6 +79,7 @@ Erie_cor <- cor(Erie_data_cor)
 corrplot(Erie_cor, method = "ellipse")
 corrplot.mixed(Erie_cor, upper = "ellipse")
 
+###change to processed data
 Erie_chla_lm <- lm(data=Erie_data, Extracted_CHLa_ugL.1 ~ Temp_C)
 summary(Erie_chla_lm)
 
