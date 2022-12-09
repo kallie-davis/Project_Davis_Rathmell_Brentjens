@@ -17,57 +17,58 @@ ggplot_theme <- theme_linedraw(base_size = 12) +
 theme_set(ggplot_theme)
 
 ##load data
-Erie_data <- read.csv("./2022_WLE_Weekly_Datashare_CSV.csv",
-                      stringsAsFactors = T)
+Erie_data <- read.csv("./Data/Processed/Erie_2012_2018_processed.csv")
 View(Erie_data)
 
 ##data wrangling
-class(Erie_data$Temp_C)
-Erie_data$Temp_C <- as.numeric(as.character(Erie_data$Temp_C))
-
-class(Erie_data$DO_mgL.1)
-Erie_data$DO_mgL.1 <- as.numeric(as.character(Erie_data$DO_mgL.1))
-
-class(Erie_data$Dissolved_Microcystin_ugL.1)
-Erie_data$Dissolved_Microcystin_ugL.1 <- 
-  as.numeric(as.character(Erie_data$Dissolved_Microcystin_ugL.1))
-
-class(Erie_data$Extracted_CHLa_ugL.1)
-
-class(Erie_data$Extracted_PC_ugL.1)
-Erie_data$Extracted_PC_ugL.1 <- as.numeric(as.character(Erie_data$Extracted_PC_ugL.1))
-
 class(Erie_data$Date)
-Erie_data$Date <- as.Date(as.character(Erie_data$Date), format="%m/%d/%Y")
+Erie_data$Date <- as.Date(Erie_data$Date, format="%m/%d/%Y")
 
-Erie_data_subset <- data_frame(Erie_data$Date, Erie_data$Sample_Depth_category, 
-                               Erie_data$Temp_C, Erie_data$DO_mgL.1,
-                               Erie_data$Dissolved_Microcystin_ugL.1,
-                               Erie_data$Extracted_CHLa_ugL.1, 
-                               Erie_data$Extracted_PC_ugL.1)
+Erie_data_subset <- data_frame(Erie_data$Date, Erie_data$Sample.Depth.category, 
+                               Erie_data$CTD.Temperature.b0C, 
+                               Erie_data$CTD.Dissolved.Oxygen.mg.L,
+                               Erie_data$Dissolved.Microcystin.b5g.L,
+                               Erie_data$Extracted.Chlorophyll.a.b5g.L, 
+                               Erie_data$Extracted.Phycocyanin.b5g.L, 
+                               Erie_data$Total.Dissolved.Phosphorus.b5g.P.L,
+                               Erie_data$Ammonia.b5g.N.L,
+                               Erie_data$Nitrate..Nitrite.mg.N.L,
+                               Erie_data$Urea.b5g.N.L)
 
-colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "Chla", "PC")
+colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "Chla", "PC", "TDP", "NH3", "NO23", "urea")
 View(Erie_data_subset)
 
-Erie_data_surface <- Erie_data_subset %>%
-  filter(Depth_category=="Surface") %>%
+Erie_data_date_means <- Erie_data_subset %>%
+  filter(!Depth_category=="Scum") %>%
   group_by(Date) %>%
   summarize(mean_chla = mean(Chla),
             mean_temp = mean(Temp),
             mean_mc = mean(MC), 
-            mean_do = mean(DO))
+            mean_do = mean(DO), 
+            mean_tdp = mean(TDP),
+            mean_no23 = mean(NO23))
 
-Erie_data_bottom <- Erie_data_subset %>%
-  filter(Depth_category=="Bottom")
+View(Erie_data_date_means)
 
 chla_plot <- ggplot() +
-  geom_line(data=Erie_data_surface, aes(x=Date, y=mean_chla))
-
-mc_plot <- ggplot() +
-  geom_line(data=Erie_data_surface, aes(x=Date, y=mean_mc))
+  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_chla))
 
 chla_plot
 
+temp_plot <- ggplot() +
+  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_temp))
+
+temp_plot
+
+tdp_plot <- ggplot() +
+  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_no23))
+
+tdp_plot
+
+#mc_plot <- ggplot() +
+  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_mc))
+
+#mc_plot
 
 ##2012-2018 Data
 Erie_Data_2012_2018 <- 
@@ -115,7 +116,7 @@ Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L <- as.numeric(Erie_Data_2012_2018$Ni
 Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
 Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
 
-Erie_data_surface_ext <- Erie_Data_2012_2018 %>%
+Erie_data_surface_ext <- erie_extended_processed %>%
   filter(Sample.Depth.category=="Surface") %>%
   group_by(Date) %>%
   summarize(mean_chla = mean(Extracted.Chlorophyll.a.b5g.L),
