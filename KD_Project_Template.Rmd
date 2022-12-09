@@ -127,8 +127,7 @@ Lake Erie is the shallowest of the great lakes with an average depth of 19 meter
   2. How does Microcystis and microcystin concentration change over time?
   
   3. Are there differences between toxin and algae concentrations at different lake depths?  
-  
-Within the following analysis, temperature, nutrient concentrations (i.e., nitrogen and phosphorus), and lake depth are used to assess these trends. 
+
 
 
 \newpage
