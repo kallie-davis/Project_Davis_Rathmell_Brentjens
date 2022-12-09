@@ -45,7 +45,7 @@ Erie_Data_2012_2018 <-
           # check.names = F)
 ```
 
-```{r}
+```{r, include = FALSE}
 #Clean up column names
 colnames(Erie_Data_2012_2018) <- gsub(" ", ".", colnames(Erie_Data_2012_2018))
 colnames(Erie_Data_2012_2018) <- gsub("/", ".", colnames(Erie_Data_2012_2018))
@@ -58,7 +58,7 @@ colnames(Erie_Data_2012_2018)
 colnames(Erie_Data_2012_2018)[19] <- "Photo.active.radiation"
 ```
 
-```{r}
+```{r, include = FALSE}
 #Create new data frame 
 Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
                                   Erie_Data_2012_2018$Site,
@@ -81,7 +81,7 @@ colnames(Erie_Data_2012_2018) <- gsub("Erie_Data_2012_2018", "", colnames(Erie_D
 colnames(Erie_Data_2012_2018) <- gsub("[//$]", "", colnames(Erie_Data_2012_2018))
 ```
 
-```{r}
+```{r, include = FALSE}
 #change character variables to numeric; change date column to date format
 lapply(Erie_Data_2012_2018, class)
 Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L <- as.numeric(Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L)
@@ -93,7 +93,7 @@ Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
 Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
 ```
 
-```{r}
+```{r, include=FALSE}
 #GLMs with surface and bottom variables
 bottom_surface_Erie <- Erie_Data_2012_2018 %>% 
   filter(Sample.Depth.category == "Bottom" | Sample.Depth.category == "Surface")
@@ -121,8 +121,11 @@ Lake Erie has been affected by seasonal HABs since the 1990s (NSF, 2019). Lake E
 Lake Erie is the shallowest of the great lakes with an average depth of 19 meters (m); the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie is expected to undergo stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). Microcystis is the most common species and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie. Considering the characteristics of Western Lake Erie, this report evaluates the following questions:
 
   What are the drivers of harmful algal blooms in western Lake Erie?
-  1. Which variables contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
+  
+  1. Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
+  
   2. How does Microcystis and microcystin concentration change over time?
+  
   3. Are there differences between toxin and algae concentrations at different lake depths?  
   
 Within the following analysis, temperature, nutrient concentrations (i.e., nitrogen and phosphorus), and lake depth are used to assess these trends. 
@@ -305,10 +308,64 @@ cols_label(
 
 
 
-## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
+## Question 1: Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
 
-## Question 2: 
+## Question 2: How does Microcystis and microcystin concentration change over time?
 
+## Question 3: Are there differences between toxin and algae concentrations at different lake depths?
+
+Regarding the third question it is hypothesized that both microcystin and chlorophyll a concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
+
+***Hypotheses for microcystin concentration at surface vs. bottom depth***
+
+Ho: Surface depth microcystin concentrations are <= bottom depth microcystin concentrations
+
+HA: Surface depth microcystin concentrations are > bottom depth microcystin concentrations
+
+***Hypotheses for chlorophyll a concentration at surface vs. bottom depth***
+
+Ho: Surface depth Chlorophyll a concentrations are <= bottom depth microcystin concentrations
+
+HA: Surface depth Chlorophyll a concentrations are > bottom depth microcystin concentrations
+
+Before assessing these claims, a Shapiro-Wilk test for normality was conducted. The test rejected the null hypothesis which states that the data are normally distributed (W = 0.606, p-value = 2.2e-16). In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers. This test, rejected the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 33075, p-value = 0.0339). The test also rejected that null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 152684, p-value = 3.783e-05). Both tests yielded p-values where were below 0.05. 
+
+```{r, include = FALSE}
+shapiro.test(bottom_surface_Erie$Dissolved.Microcystin.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
+```
+
+
+```{r, include = FALSE}
+#Drop NAs
+
+bottom_surface_Erie_dropNA_microcystin <- bottom_surface_Erie %>% 
+  drop_na(Dissolved.Microcystin.b5g.L)
+
+bottom_surface_Erie_dropNA_CHLa <- bottom_surface_Erie %>% 
+  drop_na(Extracted.Chlorophyll.a.b5g.L)
+```
+
+```{r, include = FALSE}
+#flip the data
+
+bottom_surface_Erie_dropNA_microcystin$Sample.Depth.category <- factor(bottom_surface_Erie_dropNA_microcystin$Sample.Depth.category, levels = c("Surface", "Bottom"))
+
+bottom_surface_Erie_dropNA_CHLa$Sample.Depth.category <- factor(bottom_surface_Erie_dropNA_CHLa$Sample.Depth.category, levels = c("Surface", "Bottom"))
+```
+
+
+```{r, include = FALSE}
+#Microcystin: surface vs bottom
+
+wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "greater") #Due to nonnormality of the data, a rank sum test was applied
+
+```
+
+```{r, include = FALSE}
+#CHLa: surface vs bottom
+
+wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "greater") #Due to nonnormality of the data, a rank sum test was applied
+```
 
 
 
