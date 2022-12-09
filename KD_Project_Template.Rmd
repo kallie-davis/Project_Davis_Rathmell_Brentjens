@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 \newpage
 \tableofcontents 
 \newpage
@@ -8,18 +13,119 @@
 
 ```{r setup, include=FALSE}
 # Set your working directory
+getwd()
 
 # Load your packages
+library(tidyverse)
+#install.packages("lubridate")
+library(lubridate)
+#install.packages("zoo")
+library(zoo)
+#install.packages("trend")
+library(trend)
+library(ggplot2)
+#install.packages("Kendall")
+library(Kendall) 
+#install.packages("gt")
+library(gt)
 
 # Set your ggplot theme
+ggplot_theme <- theme_linedraw(base_size = 12) +
+  theme(panel.grid=element_line(colour="gray"),
+        axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(ggplot_theme)
 
 # Load your datasets
+Erie_Data_2012_2018 <- 
+  read.csv("./Data/Raw/lake_erie_habs_field_sampling_results_2012_2018_v2.csv",
+           check.names = F)
 
+#Erie_Data_2012_2018 <-   read.csv("./Data/Processed/Erie_2012_2018_processed.csv",
+          # check.names = F)
 ```
 
+```{r}
+#Clean up column names
+colnames(Erie_Data_2012_2018) <- gsub(" ", ".", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("/", ".", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("[//+]", "", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("[()]", "", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("[<>]", "", colnames(Erie_Data_2012_2018))
+
+colnames(Erie_Data_2012_2018)
+
+colnames(Erie_Data_2012_2018)[19] <- "Photo.active.radiation"
+```
+
+```{r}
+#Create new data frame 
+Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
+                                  Erie_Data_2012_2018$Site,
+                                  Erie_Data_2012_2018$Sample.Depth.category,
+                                  Erie_Data_2012_2018$Dissolved.Organic.Carbon.mg.L,
+                                  Erie_Data_2012_2018$Urea.b5g.N.L,
+                                  Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L,
+                                  Erie_Data_2012_2018$Ammonia.b5g.N.L,
+                                  Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L,
+                                  Erie_Data_2012_2018$Total.Dissolved.Phosphorus.b5g.P.L,
+                                  Erie_Data_2012_2018$Total.Phosphorus.b5g.P.L,
+                                  Erie_Data_2012_2018$Extracted.Chlorophyll.a.b5g.L,
+                                  Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L,
+                                  Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L,
+                                  Erie_Data_2012_2018$CTD.Dissolved.Oxygen.mg.L,
+                                  Erie_Data_2012_2018$Photo.active.radiation,
+                                  Erie_Data_2012_2018$Sample.Temperature.b0C,
+                                  Erie_Data_2012_2018$CTD.Temperature.b0C)
+colnames(Erie_Data_2012_2018) <- gsub("Erie_Data_2012_2018", "", colnames(Erie_Data_2012_2018))
+colnames(Erie_Data_2012_2018) <- gsub("[//$]", "", colnames(Erie_Data_2012_2018))
+```
+
+```{r}
+#change character variables to numeric; change date column to date format
+lapply(Erie_Data_2012_2018, class)
+Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L <- as.numeric(Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L)
+Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L <- as.numeric(Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L)
+Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L <- as.numeric(Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L)
+Erie_Data_2012_2018$Ammonia.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Ammonia.b5g.N.L)
+Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L <- as.numeric(Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L)
+Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
+Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
+```
+
+```{r}
+#GLMs with surface and bottom variables
+bottom_surface_Erie <- Erie_Data_2012_2018 %>% 
+  filter(Sample.Depth.category == "Bottom" | Sample.Depth.category == "Surface")
+
+Microcystin.model_SB <- lm(data = bottom_surface_Erie, Dissolved.Microcystin.b5g.L ~ 
+                        Sample.Depth.category)
+
+summary(Microcystin.model_SB) #there is a significant relationship between bottom and surface depths, but not enough data in the bottom section to be added as a dummy variable in MLR. I will break out to models into Surface and remove other observations. 
+
+Erie_Surface_2012_2018 <- Erie_Data_2012_2018 %>% 
+  filter(Sample.Depth.category == "Surface")
+
+#Surface Microcystin model (explanatory variables include temperature, phosphorus, and nitrogen)
+Microcystin.model_Surface <- lm(data = Erie_Surface_2012_2018, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C+ Total.Dissolved.Phosphorus.b5g.P.L+Nitrate..Nitrite.mg.N.L)
+
+summary(Microcystin.model_Surface)
+```
 
 # Rationale and Research Questions
 
+Harmful algal blooms (HABs) are characterized by rapid algae population growth coupled with toxin production in an aquatic system (NOAA, 2016). In recent history HABs have been shown to be increasing in prevalence with documented observations throughout the U.S. and the world (U.S. National Office for HABs, n.d.). This increased prevalence of HABs poses a threat to both public and ecosystem health (U.S. EPA, 2022a). Generally, HABs are associated with an influx of environmental nutrients into an aquatic system; however, other regional or lake-specific variables such as temperature, physical chemical properties, and lake structure can influence the development of HABs (CDC, 2022). Although HABs have been largely stated to have increased through time, many of these variables are challenging to generalize across water bodies due to the complexity of algal bloom formation. It is for this reason that this report will focus on HAB development in one water body: Lake Erie.  
+
+Lake Erie has been affected by seasonal HABs since the 1990s (NSF, 2019). Lake Erie is adjacent to multiple metropolitan areas with populations that exceed 50,000 people and provides drinking water for 12 million people (U.S. EPA, 2022b). In 2015 Lake Erie had a bloom which covered over 300 square miles, thus making it one of the largest algal blooms documented in recent history (LEF, n.d.). Algae and toxin production has public health implications for surrounding populations as exposure can occur through recreation and consumption of contaminated drinking water (Dierkes, 2014; U.S. EPA, 2022b). Algal blooms can also create anoxic conditions when algae undergo decomposition in the environment which also influences ecosystem health (CDC, 2022). Due to the historical and current public health and ecosystem prevalence, data collection efforts have been implemented within Lake Erie to aid with forecasting future bloom severity. These data in the western basin are evaluated in this report.
+
+Lake Erie is the shallowest of the great lakes with an average depth of 19 meters (m); the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie is expected to undergo stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). Microcystis is the most common species and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie. Considering the characteristics of Western Lake Erie, this report evaluates the following questions:
+
+  What are the drivers of harmful algal blooms in western Lake Erie?
+  1. Which variables contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
+  2. How does Microcystis and microcystin concentration change over time?
+  3. Are there differences between toxin and algae concentrations at different lake depths?  
+  
+Within the following analysis, temperature, nutrient concentrations (i.e., nitrogen and phosphorus), and lake depth are used to assess these trends. 
 
 
 \newpage
@@ -28,11 +134,170 @@
 
 
 
+
+
+
 \newpage
 
 # Exploratory Analysis 
 
+***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths***
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+# Select Variables of Interest
 
+Erie.select<-bottom_surface_Erie%>%
+ dplyr::select(Sample.Depth.category, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
+head(Erie.select)
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+Erie.select.longer<-pivot_longer(Erie.select, !Sample.Depth.category, names_to = "Variable", values_to = "value")
+
+summary.Erie<-Erie.select.longer%>%
+  dplyr::group_by(Sample.Depth.category, Variable) %>%
+  dplyr::summarize(
+    Obs=length(value)-sum(is.na(value)),
+    Mean=mean(value, na.rm=TRUE),
+    SD=sd(value, na.rm=TRUE),
+    Median=median(value, na.rm=TRUE))
+   
+head(summary.Erie)
+
+#remove columns which have NAs
+summary.Erie_dropNAs <- summary.Erie %>% 
+  drop_na()
+  
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#recode
+summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
+                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
+                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
+                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
+                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
+                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
+                                         CTD.Temperature.b0C= "Temperature (deg C)")
+```
+
+```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
+#Create Table
+
+summary.Erie_dropNAs %>%
+gt() %>%
+ 
+
+
+  cols_width(
+    c(Variable)~ px(120),
+    c(Obs)~ px(120),
+    everything() ~ px(90))%>%
+
+  
+  
+  tab_header(
+    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics at Bottom and Surface Depths")) %>%
+  
+ 
+  fmt_passthrough (columns=c(Variable)) %>%
+  fmt_number(columns = c(Obs), decimals = 0) %>%
+  fmt_number(columns = c(Median), decimals = 2) %>%
+  fmt_number(columns = c(Mean), decimals = 2) %>%
+  fmt_number(columns = c(SD), decimals = 2) %>%
+  
+
+cols_label(
+    Variable = "",
+    Obs = "Oberservations",
+    Median = "Median",
+    Mean = "Mean",
+    SD = "Standard Deviation")
+  
+
+```
+
+***Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 20187***
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#Add a year column
+Erie_Data_2012_2018 <- Erie_Surface_2012_2018 %>% 
+  mutate(Year = format(Date, "%Y"))
+
+# Select Variables of Interest
+Erie.select<-Erie_Data_2012_2018%>%
+ dplyr::select(Year, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
+head(Erie.select)
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+Erie.select.longer<-pivot_longer(Erie.select, !Year, names_to = "Variable", values_to = "value")
+
+summary.Erie<-Erie.select.longer%>%
+  dplyr::group_by(Year, Variable) %>%
+  dplyr::summarize(
+    Obs=length(value)-sum(is.na(value)),
+    Mean=mean(value, na.rm=TRUE),
+    SD=sd(value, na.rm=TRUE),
+    Median=median(value, na.rm=TRUE))
+   
+head(summary.Erie)
+
+#remove columns which have NAs
+summary.Erie_dropNAs <- summary.Erie %>% 
+  drop_na()
+  
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#recode
+summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
+                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
+                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
+                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
+                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
+                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
+                                         CTD.Temperature.b0C= "Temperature (deg C)")
+```
+
+```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
+#Create Table
+
+summary.Erie_dropNAs %>%
+gt() %>%
+ 
+
+
+  cols_width(
+    c(Variable)~ px(120),
+    c(Obs)~ px(120),
+    everything() ~ px(90))%>%
+
+  
+  
+  tab_header(
+    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics in 2012 through 2018")) %>%
+  
+ 
+  fmt_passthrough (columns=c(Variable)) %>%
+  fmt_number(columns = c(Obs), decimals = 0) %>%
+  fmt_number(columns = c(Median), decimals = 2) %>%
+  fmt_number(columns = c(Mean), decimals = 2) %>%
+  fmt_number(columns = c(SD), decimals = 2) %>%
+  
+
+cols_label(
+    Variable = "",
+    Obs = "Oberservations",
+    Median = "Median",
+    Mean = "Mean",
+    SD = "Standard Deviation")
+  
+
+```
 
 \newpage
 
@@ -56,3 +321,21 @@
 
 # References
 <add references here if relevant, otherwise delete this section> 
+
+Centers for Disease Control and Prevention (CDC; 2022). Causes and Ecosystem Impacts. https://www.cdc.gov/habs/environment.html#:~:text=Levels%20of%20nutrients%20such%20as%20phosphorus%20and%20nitrogen%20increase%20in,Sewage%20from%20people%20and%20animals
+
+Dean, S. (2022). Harmful algal blooms in Lake Erie expected to be smaller this year, says NOAA. https://www.michigan.gov/egle/newsroom/mi-environment/2022/08/11/harmful-algal-blooms-in-lake-erie-expected-to-be-smaller-this-year-says-noaa#:~:text=The%20Lake%20Erie%20HABs%20consist,treatment%20of%20their%20source%20water.
+Dierkes, C. (2014). Algae Through the Ages. https://ohioseagrant.osu.edu/news/2014/17gmc/algae-through-the-ages
+
+Lake Erie Foundation (LEF; n.d.) Harmful Algal Blooms. https://lakeeriefoundation.org/issues/nutrientsharmful-algae/#:~:text=Harmful%20algal%20blooms%20(HABs)%20are,and%20the%20resulting%20algal%20blooms.
+
+National Oceanic and Atmospheric Administration (NOAA; 2016). What is a harmful algal bloom? https://www.noaa.gov/what-is-harmful-algal-bloom
+
+National Science Foundation (NSF; 2019). Lake Erie's toxic algae blooms: Why is the water turning green? https://beta.nsf.gov/news/lake-eries-toxic-algae-blooms-why-water-turning#:~:text=Since%20the%20late%201990s%2C%20Lake,warnings%20to%20avoid%20water%20contact. 
+
+United States Environmental Protection Agency (U.S. EPA; 2022a). Harmful Algal Blooms. https://www.epa.gov/nutrientpollution/harmful-algal-blooms
+
+United States Environmental Protection Agency (U.S. EPA; 2022b). Lake Erie. https://www.epa.gov/greatlakes/lake-erie
+U.S. National Office for HABs. Recent Trends: National Changes. (n.d.) https://hab.whoi.edu/maps/regions-us-distribution/regions-us-recent-trends/
+```
+
