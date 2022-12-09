@@ -51,6 +51,10 @@ Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category,
                           Erie_data$Extracted_PC_ugL.1)
 
 colnames(Erie_data_subset) <- c("Depth_category", "Temp", "DO", "MC", "Chla", "PC")
+View(Erie_data_subset)
+
+Erie_data_subset <- Erie_data_subset %>%
+  filter(!Depth_category=="Scum")
 
 write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
 Erie_data_processed <- read.csv("./Data/Processed/Erie_2022_processed.csv")
