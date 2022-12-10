@@ -1,13 +1,6 @@
 library(tidyverse)
 #install.packages("lubridate")
 library(lubridate)
-#install.packages("zoo")
-library(zoo)
-#install.packages("trend")
-library(trend)
-library(ggplot2)
-#install.packages("Kendall")
-library(Kendall)
 
 ##setting ggplot theme
 ggplot_theme <- theme_linedraw(base_size = 12) +
@@ -39,14 +32,15 @@ colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "C
 View(Erie_data_subset)
 
 Erie_data_date_means <- Erie_data_subset %>%
-  filter(!Depth_category=="Scum") %>%
   group_by(Date) %>%
-  summarize(mean_chla = mean(Chla),
-            mean_temp = mean(Temp),
-            mean_mc = mean(MC), 
-            mean_do = mean(DO), 
-            mean_tdp = mean(TDP),
-            mean_no23 = mean(NO23))
+  summarize(mean_chla = mean(Chla, na.rm=T),
+            mean_temp = mean(Temp, na.rm=T),
+            mean_mc = mean(MC,na.rm=T),
+            mean_do = mean(DO,na.rm=T),
+            mean_tdp = mean(TDP, na.rm=T),
+            mean_no23 = mean(NO23, na.rm=T)) %>%
+  mutate(month = month(Date)) %>%
+  mutate(year = year(Date))
 
 View(Erie_data_date_means)
 
@@ -61,85 +55,41 @@ temp_plot <- ggplot() +
 temp_plot
 
 tdp_plot <- ggplot() +
-  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_no23))
+  geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_tdp))
 
 tdp_plot
 
-#mc_plot <- ggplot() +
+mc_plot <- ggplot() +
   geom_line(data=Erie_data_date_means, aes(x=Date, y=mean_mc))
 
-#mc_plot
+mc_plot
 
-##2012-2018 Data
-Erie_Data_2012_2018 <- 
-  read.csv("./lake_erie_habs_field_sampling_results_2012_2018_v2.csv",
-           check.names = F)
-
-colnames(Erie_Data_2012_2018) <- gsub(" ", ".", colnames(Erie_Data_2012_2018))
-colnames(Erie_Data_2012_2018) <- gsub("/", ".", colnames(Erie_Data_2012_2018))
-colnames(Erie_Data_2012_2018) <- gsub("[//+]", "", colnames(Erie_Data_2012_2018))
-colnames(Erie_Data_2012_2018) <- gsub("[()]", "", colnames(Erie_Data_2012_2018))
-colnames(Erie_Data_2012_2018) <- gsub("[<>]", "", colnames(Erie_Data_2012_2018))
-
-View(Erie_Data_2012_2018)
-colnames(Erie_Data_2012_2018)
-
-colnames(Erie_Data_2012_2018)[19] <- "Photo.active.radiation"
-
-Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
-                                  Erie_Data_2012_2018$Site,
-                                  Erie_Data_2012_2018$Sample.Depth.category,
-                                  Erie_Data_2012_2018$Dissolved.Organic.Carbon.mg.L,
-                                  Erie_Data_2012_2018$Urea.b5g.N.L,
-                                  Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L,
-                                  Erie_Data_2012_2018$Ammonia.b5g.N.L,
-                                  Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L,
-                                  Erie_Data_2012_2018$Total.Dissolved.Phosphorus.b5g.P.L,
-                                  Erie_Data_2012_2018$Total.Phosphorus.b5g.P.L,
-                                  Erie_Data_2012_2018$Extracted.Chlorophyll.a.b5g.L,
-                                  Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L,
-                                  Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L,
-                                  Erie_Data_2012_2018$CTD.Dissolved.Oxygen.mg.L,
-                                  Erie_Data_2012_2018$Photo.active.radiation,
-                                  Erie_Data_2012_2018$Sample.Temperature.b0C,
-                                  Erie_Data_2012_2018$CTD.Temperature.b0C)
-colnames(Erie_Data_2012_2018) <- gsub("Erie_Data_2012_2018", "", colnames(Erie_Data_2012_2018))
-colnames(Erie_Data_2012_2018) <- gsub("[//$]", "", colnames(Erie_Data_2012_2018))
-View(Erie_Data_2012_2018)
-
-lapply(Erie_Data_2012_2018, class)
-Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L <- as.numeric(Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L)
-Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L <- as.numeric(Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L)
-Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L <- as.numeric(Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L)
-Erie_Data_2012_2018$Ammonia.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Ammonia.b5g.N.L)
-Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L <- as.numeric(Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L)
-Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
-Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
-
-Erie_data_surface_ext <- erie_extended_processed %>%
-  filter(Sample.Depth.category=="Surface") %>%
-  group_by(Date) %>%
-  summarize(mean_chla = mean(Extracted.Chlorophyll.a.b5g.L),
-            mean_temp = mean(CTD.Temperature.b0C),
-            mean_mc = mean(Dissolved.Microcystin.b5g.L), 
-            mean_do = mean(CTD.Dissolved.Oxygen.mg.L)) %>%
-  mutate(year = year(Date)) %>%
-  mutate(month = month(Date)) %>%
-  mutate(day = day(Date)) %>%
-  month_day=paste(month,"/", day)
-View(Erie_data_surface_ext)
-
-class(Erie_data_surface_ext$month)
-#Erie_data_surface_ext$month <- as.Date(Erie_data_surface_ext$month)
-
+  
+  
+Erie_data_month_means <- Erie_data_subset %>%
+    mutate(month = month(Date)) %>%
+    mutate(year = year(Date)) %>%
+    group_by(year, month) %>%
+    summarize(mean_chla = mean(Chla, na.rm=T),
+              mean_temp = mean(Temp, na.rm=T),
+              mean_mc = mean(MC, na.rm=T), 
+              mean_do = mean(DO, na.rm=T), 
+              mean_tdp = mean(TDP, na.rm=T),
+              mean_no23 = mean(NO23, na.rm=T)) 
+  
+View(Erie_data_month_means)
+  
 chla_plot_ext <- ggplot() +
-  geom_line(data=filter(Erie_data_surface_ext, year=="2014"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_surface_ext, year=="2012"), aes(x=month, y=mean_chla))
+  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla),
+            color="red") +
+  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla))
+
+chla_plot_ext
 
 temp_plot_ext <- ggplot() +
   geom_line(data=filter(Erie_data_surface_ext, year=="2017"), aes(x=Date, y=mean_temp))
 
-chla_plot_ext
 temp_plot_ext
 
-##combining datasets
+
