@@ -80,10 +80,14 @@ Erie_data_month_means <- Erie_data_subset %>%
 View(Erie_data_month_means)
   
 chla_plot_ext <- ggplot() +
-  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla),
+  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla),
             color="red") +
-  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla))
+  geom_line(data=filter(Erie_data_month_means, year=="2013"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2014"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2016"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_month_means, year=="2018"), aes(x=month, y=mean_chla))
 
 chla_plot_ext
 
