@@ -44,13 +44,13 @@ class(Erie_data$Extracted_CHLa_ugL.1)
 class(Erie_data$Extracted_PC_ugL.1)
 Erie_data$Extracted_PC_ugL.1 <- as.numeric(Erie_data$Extracted_PC_ugL.1)
 
-Erie_data_subset <- data_frame(Erie_data$Sample_Depth_category, 
+Erie_data_subset <- data_frame(Erie_data$Date, Erie_data$Sample_Depth_category, 
                                Erie_data$Temp_C, Erie_data$DO_mgL.1,
                           Erie_data$Dissolved_Microcystin_ugL.1,
                           Erie_data$Extracted_CHLa_ugL.1, 
                           Erie_data$Extracted_PC_ugL.1)
 
-colnames(Erie_data_subset) <- c("Depth_category", "Temp", "DO", "MC", "Chla", "PC")
+colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "Chla", "PC")
 View(Erie_data_subset)
 
 Erie_data_subset <- Erie_data_subset %>%

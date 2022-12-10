@@ -78,6 +78,20 @@ Erie_data_month_means <- Erie_data_subset %>%
               mean_no23 = mean(NO23, na.rm=T)) 
   
 View(Erie_data_month_means)
+
+Erie_data_2022 <- read.csv("./Data/Processed/Erie_2022_processed.csv")
+View(Erie_data_2022)
+
+Erie_data_2022_means <- Erie_data_2022 %>%
+  mutate(month = month(Date)) %>%
+  mutate(year = year(Date)) %>%
+  group_by(year, month) %>%
+  summarize(mean_chla = mean(Chla, na.rm=T),
+            mean_temp = mean(Temp, na.rm=T),
+            mean_mc = mean(MC, na.rm=T), 
+            mean_do = mean(DO, na.rm=T), 
+            mean_tdp = mean(TDP, na.rm=T),
+            mean_no23 = mean(NO23, na.rm=T)) 
   
 chla_plot_ext <- ggplot() +
   geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla),
@@ -87,7 +101,8 @@ chla_plot_ext <- ggplot() +
   geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_chla)) +
   geom_line(data=filter(Erie_data_month_means, year=="2016"), aes(x=month, y=mean_chla)) +
   geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2018"), aes(x=month, y=mean_chla))
+  geom_line(data=filter(Erie_data_month_means, year=="2018"), aes(x=month, y=mean_chla)) +
+  geom_line(data=filter(Erie_data_2022), aes(x=month, y=mean_chla))
 
 chla_plot_ext
 
