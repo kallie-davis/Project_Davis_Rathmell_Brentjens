@@ -82,33 +82,52 @@ View(Erie_data_month_means)
 Erie_data_2022 <- read.csv("./Data/Processed/Erie_2022_processed.csv")
 View(Erie_data_2022)
 
+class(Erie_data_2022$Date)
+Erie_data_2022$Date <- as.Date(Erie_data_2022$Date, format="%m/%d/%Y")
+
 Erie_data_2022_means <- Erie_data_2022 %>%
   mutate(month = month(Date)) %>%
   mutate(year = year(Date)) %>%
   group_by(year, month) %>%
   summarize(mean_chla = mean(Chla, na.rm=T),
             mean_temp = mean(Temp, na.rm=T),
-            mean_mc = mean(MC, na.rm=T), 
-            mean_do = mean(DO, na.rm=T), 
-            mean_tdp = mean(TDP, na.rm=T),
-            mean_no23 = mean(NO23, na.rm=T)) 
+            mean_mc = mean(MC, na.rm=T),
+            mean_do = mean(DO, na.rm=T))
   
 chla_plot_ext <- ggplot() +
   geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_chla),
-            color="red") +
-  geom_line(data=filter(Erie_data_month_means, year=="2013"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2014"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2016"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_month_means, year=="2018"), aes(x=month, y=mean_chla)) +
-  geom_line(data=filter(Erie_data_2022), aes(x=month, y=mean_chla))
+            color="black", linewidth=0.75) +
+  geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_chla),
+            color="tomato", linewidth=0.75) +
+  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_chla),
+            color="#009E73", linewidth=0.75) +
+  geom_line(data=filter(Erie_data_2022_means), aes(x=month, y=mean_chla),
+            color="#0072B2",linewidth=0.75)
 
 chla_plot_ext
 
 temp_plot_ext <- ggplot() +
-  geom_line(data=filter(Erie_data_surface_ext, year=="2017"), aes(x=Date, y=mean_temp))
+  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_temp),
+            color="black") +
+  geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_temp),
+            color="tomato") +
+  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_temp),
+            color="#009E73") +
+  geom_line(data=filter(Erie_data_2022_means), aes(x=month, y=mean_temp),
+            color="#0072B2")
 
 temp_plot_ext
+
+mc_plot_ext <- ggplot() +
+  geom_line(data=filter(Erie_data_month_means, year=="2012"), aes(x=month, y=mean_mc),
+            color="black",linewidth=0.75) +
+  geom_line(data=filter(Erie_data_month_means, year=="2015"), aes(x=month, y=mean_mc),
+            color="tomato",linewidth=0.75) +
+  geom_line(data=filter(Erie_data_month_means, year=="2017"), aes(x=month, y=mean_mc),
+            color="#009E73", linewidth=0.75) +
+  geom_line(data=filter(Erie_data_2022_means), aes(x=month, y=mean_mc),
+            color="#0072B2", linewidth=0.75)
+
+mc_plot_ext
 
 
