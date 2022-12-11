@@ -33,7 +33,7 @@ theme_set(ggplot_theme)
 
 # Load your datasets
 Erie_Data_2012_2018 <-read.csv("./Data/Processed/Erie_2012_2018_processed.csv",
-          check.names = F, stringsAsFactors = TRUE)
+          check.names = F)
 
 ```
 
@@ -65,7 +65,8 @@ Lake Erie is the shallowest of the great lakes with an average depth of 19 meter
 # Exploratory Analysis 
 ```{r}
 bottom_surface_Erie <- Erie_Data_2012_2018 %>% 
-  dplyr::filter(Sample.Depth.category == "Surface" | Sample.Depth.category == "Bottom")
+  dplyr::filter(Sample.Depth.category == "Surface" | 
+                  Sample.Depth.category == "Bottom")
 ```
 
 
