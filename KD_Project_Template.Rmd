@@ -42,7 +42,7 @@ Erie_Data_2012_2018 <-
            check.names = F)
 
 #Erie_Data_2012_2018 <-   read.csv("./Data/Processed/Erie_2012_2018_processed.csv",
-          # check.names = F)
+      #    check.names = F)
 ```
 
 ```{r, include = FALSE}
@@ -67,9 +67,9 @@ Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
                                   Erie_Data_2012_2018$Urea.b5g.N.L,
                                   Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L,
                                   Erie_Data_2012_2018$Ammonia.b5g.N.L,
-                                  Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L,
+                                 Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L,
                                   Erie_Data_2012_2018$Total.Dissolved.Phosphorus.b5g.P.L,
-                                  Erie_Data_2012_2018$Total.Phosphorus.b5g.P.L,
+                                 Erie_Data_2012_2018$Total.Phosphorus.b5g.P.L,
                                   Erie_Data_2012_2018$Extracted.Chlorophyll.a.b5g.L,
                                   Erie_Data_2012_2018$Extracted.Phycocyanin.b5g.L,
                                   Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L,
@@ -91,25 +91,36 @@ Erie_Data_2012_2018$Ammonia.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Ammonia.b5
 Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L <- as.numeric(Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L)
 Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
 Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
+
+#remove scum
+Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>%
+  filter(!Sample.Depth.category=="Scum")
 ```
+
+```{r}
+#write.csv(Erie_Data_2012_2018_2, "./Data/Processed/Erie_2012_2018_2_processed.csv")
+```
+
 
 ```{r, include=FALSE}
 #GLMs with surface and bottom variables
 bottom_surface_Erie <- Erie_Data_2012_2018 %>% 
   filter(Sample.Depth.category == "Bottom" | Sample.Depth.category == "Surface")
 
-Microcystin.model_SB <- lm(data = bottom_surface_Erie, Dissolved.Microcystin.b5g.L ~ 
-                        Sample.Depth.category)
+#Microcystin.model_SB <- lm(data = bottom_surface_Erie, Dissolved.Microcystin.b5g.L ~ 
+#                        Sample.Depth.category)
 
-summary(Microcystin.model_SB) #there is a significant relationship between bottom and surface depths, but not enough data in the bottom section to be added as a dummy variable in MLR. I will break out to models into Surface and remove other observations. 
+#summary(Microcystin.model_SB) #there is a significant relationship between bottom and surface depths, but not enough data in the bottom section to be added as a dummy variable in MLR. I will break out to models into Surface and remove other observations. 
 
-Erie_Surface_2012_2018 <- Erie_Data_2012_2018 %>% 
-  filter(Sample.Depth.category == "Surface")
+#Erie_Surface_2012_2018 <- Erie_Data_2012_2018 %>% 
+#  filter(Sample.Depth.category == "Surface")
 
 #Surface Microcystin model (explanatory variables include temperature, phosphorus, and nitrogen)
-Microcystin.model_Surface <- lm(data = Erie_Surface_2012_2018, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C+ Total.Dissolved.Phosphorus.b5g.P.L+Nitrate..Nitrite.mg.N.L)
+#Microcystin.model_Surface <- lm(data = Erie_Surface_2012_2018, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C+ Total.Dissolved.Phosphorus.b5g.P.L+Nitrate..Nitrite.mg.N.L)
 
-summary(Microcystin.model_Surface)
+#summary(Microcystin.model_Surface)
+
+unique(bottom_surface_Erie$Sample.Depth.category)
 ```
 
 # Rationale and Research Questions
@@ -327,7 +338,7 @@ Ho: Surface depth Chlorophyll a concentrations are <= bottom depth microcystin c
 
 HA: Surface depth Chlorophyll a concentrations are > bottom depth microcystin concentrations
 
-Before assessing these claims, a Shapiro-Wilk test for normality was conducted. The test rejected the null hypothesis which states that the data are normally distributed (W = 0.606, p-value = 2.2e-16). In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers. This test, rejected the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 33075, p-value = 0.0339). The test also rejected that null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 152684, p-value = 3.783e-05). Both tests yielded p-values where were below 0.05. 
+Before assessing these claims, a Shapiro-Wilk test for normality was conducted. The test rejected the null hypothesis which states that the data are normally distributed (W = 0.606, p-value = 2.2e-16). In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers. This test, rejected the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 33075, p-value = 0.0339). The test also rejected that null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 152684, p-value = 3.783e-05). A rejection of the null hypothesis which states that dissolved oxygen concentrations at surface depth are less than or equal to dissolved oxygen concentrations at bottom depth (W = 68352, p-value < 2.2e-16) All tests yielded p-values where were below 0.05. 
 
 ```{r, include = FALSE}
 #test for normality of data
@@ -335,7 +346,7 @@ shapiro.test(bottom_surface_Erie$Dissolved.Microcystin.b5g.L) #the data is not s
 
 shapiro.test(bottom_surface_Erie$Extracted.Chlorophyll.a.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
 
-#shapiro.test(bottom_surface_Erie$CTD.Dissolved.Oxygen.mg.L)#the data is not shown to be normal; reject the null hypothesis of normality in this case
+shapiro.test(bottom_surface_Erie$CTD.Dissolved.Oxygen.mg.L)#the data is not shown to be normal; reject the null hypothesis of normality in this case
 ```
 
 
@@ -348,40 +359,37 @@ bottom_surface_Erie_dropNA_microcystin <- bottom_surface_Erie %>%
 bottom_surface_Erie_dropNA_CHLa <- bottom_surface_Erie %>% 
   drop_na(Extracted.Chlorophyll.a.b5g.L)
 
-#bottom_surface_Erie_dropNA_DO <- bottom_surface_Erie %>% 
-  #drop_na(CTD.Dissolved.Oxygen.mg.L)
-```
-
-```{r, include = FALSE}
-#flip the data
-
-bottom_surface_Erie_dropNA_microcystin$Sample.Depth.category <- factor(bottom_surface_Erie_dropNA_microcystin$Sample.Depth.category, levels = c("Surface", "Bottom"))
-
-bottom_surface_Erie_dropNA_CHLa$Sample.Depth.category <- factor(bottom_surface_Erie_dropNA_CHLa$Sample.Depth.category, levels = c("Surface", "Bottom"))
-
-#bottom_surface_Erie_dropNA_DO$CTD.Dissolved.Oxygen.mg.L <- factor(bottom_surface_Erie_dropNA_DO$CTD.Dissolved.Oxygen.mg.L, levels = c("Surface", "Bottom"))
+bottom_surface_Erie_dropNA_DO <- bottom_surface_Erie %>% 
+  drop_na(CTD.Dissolved.Oxygen.mg.L)
 ```
 
 
 ```{r, include = FALSE}
 #Microcystin: surface vs bottom
 
-wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "greater") #Due to nonnormality of the data, a rank sum test was applied
+wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 
 ```
 
 ```{r, include = FALSE}
 #CHLa: surface vs bottom
 
-wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "greater") #Due to nonnormality of the data, a rank sum test was applied
+wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 ```
 
 ```{r}
 #DO: surface vs bottom
 
-#There is no bottom level data for DO, so we will have to exclude this part
+wilcox.test(CTD.Dissolved.Oxygen.mg.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_DO, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
+```
+```{r}
+#CHLa boxplot: surface vs bottom
+CHLa_SB_plot <- ggplot(bottom_surface_Erie_dropNA_CHLa)+ 
+  geom_boxplot(aes(x = Sample.Depth.category, y=Extracted.Chlorophyll.a.b5g.L))+
+  ylim(0,100)+
+  labs(y = "Extracted Chlorophyll a Concentration (ug/L)", x = "Sample Depth Category", title = "Extracted Chlorophyll a Concentration at Surface and Bottom Depths")
 
-#wilcox.test(CTD.Dissolved.Oxygen.mg.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_DO, alternative = "greater") #Due to nonnormality of the data, a rank sum test was applied
+print(CHLa_SB_plot)
 ```
 
 
