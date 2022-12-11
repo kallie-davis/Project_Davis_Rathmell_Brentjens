@@ -7,10 +7,9 @@ output:
 \tableofcontents 
 \newpage
 \listoftables 
+Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018
 
-Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths
-
-Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 20187
+Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths
 
 Table ###. Shapiro-Wilk Test for Normality Results
 
@@ -174,86 +173,9 @@ The sourced data set contains information on parameters ranging from 2012 - 2018
 
 # Exploratory Analysis 
 
+To begin exploration of the questions, a summary statistics table (Table 1) was generated to show the number of observations, mean, standard deviation, and median within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature. This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occuring within given years. 
 
-
-***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths***
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-# Select Variables of Interest
-
-Erie.select<-bottom_surface_Erie%>%
- dplyr::select(Sample.Depth.category, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
-head(Erie.select)
-
-```
-
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-
-Erie.select.longer<-pivot_longer(Erie.select, !Sample.Depth.category, names_to = "Variable", values_to = "value")
-
-summary.Erie<-Erie.select.longer%>%
-  dplyr::group_by(Sample.Depth.category, Variable) %>%
-  dplyr::summarize(
-    Obs=length(value)-sum(is.na(value)),
-    Mean=mean(value, na.rm=TRUE),
-    SD=sd(value, na.rm=TRUE),
-    Median=median(value, na.rm=TRUE))
-   
-head(summary.Erie)
-
-#remove columns which have NAs
-summary.Erie_dropNAs <- summary.Erie %>% 
-  drop_na()
-  
-```
-
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-#recode
-summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
-                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
-                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
-                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
-                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
-                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
-                                         CTD.Temperature.b0C= "Temperature (deg C)")
-```
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-#Create Table
-
-summary.Erie_dropNAs %>%
-gt() %>%
- 
-
-
-  cols_width(
-    c(Variable)~ px(120),
-    c(Obs)~ px(120),
-    everything() ~ px(90))%>%
-
-  
-  
-  tab_header(
-    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics at Bottom and Surface Depths")) %>%
-  
- 
-  fmt_passthrough (columns=c(Variable)) %>%
-  fmt_number(columns = c(Obs), decimals = 0) %>%
-  fmt_number(columns = c(Median), decimals = 2) %>%
-  fmt_number(columns = c(Mean), decimals = 2) %>%
-  fmt_number(columns = c(SD), decimals = 2) %>%
-  
-
-cols_label(
-    Variable = "",
-    Obs = "Oberservations",
-    Median = "Median",
-    Mean = "Mean",
-    SD = "Standard Deviation")
-  
-
-```
-
-***Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 20187***
+***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018***
 
 ```{r, include = FALSE, message = FALSE, warning = FALSE}
 
@@ -331,6 +253,86 @@ cols_label(
 
 ```
 
+To explore the third question, a summary statistics table (Table 2) was generated to show the number of observations, mean, standard deviation, and median within each group of interest (i.e., surface and bottom depth categories). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends for both bottom and surface depth observations. 
+
+***Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths***
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+# Select Variables of Interest
+
+Erie.select<-bottom_surface_Erie%>%
+ dplyr::select(Sample.Depth.category, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
+head(Erie.select)
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+Erie.select.longer<-pivot_longer(Erie.select, !Sample.Depth.category, names_to = "Variable", values_to = "value")
+
+summary.Erie<-Erie.select.longer%>%
+  dplyr::group_by(Sample.Depth.category, Variable) %>%
+  dplyr::summarize(
+    Obs=length(value)-sum(is.na(value)),
+    Mean=mean(value, na.rm=TRUE),
+    SD=sd(value, na.rm=TRUE),
+    Median=median(value, na.rm=TRUE))
+   
+head(summary.Erie)
+
+#remove columns which have NAs
+summary.Erie_dropNAs <- summary.Erie %>% 
+  drop_na()
+  
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#recode
+summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
+                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
+                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
+                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
+                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
+                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
+                                         CTD.Temperature.b0C= "Temperature (deg C)")
+```
+
+```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
+#Create Table
+
+summary.Erie_dropNAs %>%
+gt() %>%
+ 
+
+
+  cols_width(
+    c(Variable)~ px(120),
+    c(Obs)~ px(120),
+    everything() ~ px(90))%>%
+
+  
+  
+  tab_header(
+    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics at Bottom and Surface Depths")) %>%
+  
+ 
+  fmt_passthrough (columns=c(Variable)) %>%
+  fmt_number(columns = c(Obs), decimals = 0) %>%
+  fmt_number(columns = c(Median), decimals = 2) %>%
+  fmt_number(columns = c(Mean), decimals = 2) %>%
+  fmt_number(columns = c(SD), decimals = 2) %>%
+  
+
+cols_label(
+    Variable = "",
+    Obs = "Oberservations",
+    Median = "Median",
+    Mean = "Mean",
+    SD = "Standard Deviation")
+  
+
+```
+
+
 \newpage
 
 # Analysis
@@ -343,7 +345,7 @@ cols_label(
 
 ## Question 3: Are there differences between toxin and algae concentrations at different lake depths?
 
-Regarding the third question it is hypothesized that both microcystin and chlorophyll a concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
+Regarding the third question it is hypothesized that both microcystin, chlorophyll a, and dissolved oxygen concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
 
 ***Hypotheses for microcystin concentration at surface vs. bottom depth***
 
