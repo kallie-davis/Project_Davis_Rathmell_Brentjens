@@ -58,46 +58,64 @@ summary_table_2022
 ##histograms
 #chla
 chla_hist_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=Extracted.Chlorophyll.a.b5g.L))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 chla_hist_2012_2018
 
 chla_hist_no_outlier <- ggplot(data=subset(erie_data_2012_2018, !Extracted.Chlorophyll.a.b5g.L>6000), aes(x=Extracted.Chlorophyll.a.b5g.L))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 chla_hist_no_outlier
 ##easier to see distribution of chl a when outlier is removed
 
 chla_hist_2022 <- ggplot(data=erie_data_2022, aes(x=Chla))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
 chla_hist_2022
 
 
 #temp
 temp_hist_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=CTD.Temperature.b0C))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2012-2018")
 temp_hist_2012_2018
 
 temp_hist_2022 <- ggplot(data=erie_data_2022, aes(x=Temp))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2022")
 temp_hist_2022
 
 
 #MC
 mc_hist_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=Dissolved.Microcystin.b5g.L))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 mc_hist_2012_2018
 
 mc_hist_2022 <- ggplot(data=erie_data_2022, aes(x=MC))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
 mc_hist_2022
 
 
 #DO
 do_hist_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=CTD.Dissolved.Oxygen.mg.L))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab("Dissolved Oxygen (mg/L)") +
+  ggtitle("2012-2018")
 do_hist_2012_2018
 
 do_hist_2022 <- ggplot(data=erie_data_2022, aes(x=DO))+
-  geom_histogram(bins=50, color="black", fill="lightgray") 
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab("Dissolved Oxygen (mg/L)") +
+  ggtitle("2022")
 do_hist_2022
 
 
@@ -119,24 +137,39 @@ do_hist_2022
 
 ##surface v. bottom box plots
 chla_depth_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=as.factor(Sample.Depth.category), y=Extracted.Chlorophyll.a.b5g.L))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 chla_depth_2012_2018
 
 ##??
 chla_depth_no_outlier <- ggplot(data=subset(erie_data_2012_2018, !Extracted.Chlorophyll.a.b5g.L>750), aes(x=as.factor(Sample.Depth.category), y=Extracted.Chlorophyll.a.b5g.L))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 chla_depth_no_outlier
 
 chla_depth_2022 <- ggplot(data=erie_data_2022, aes(x=as.factor(Depth_category), y=Chla))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
 chla_depth_2022
 
 MC_depth_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=as.factor(Sample.Depth.category), y=Dissolved.Microcystin.b5g.L))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
 MC_depth_2012_2018
 
 MC_depth_2022 <- ggplot(data=erie_data_2022, aes(x=as.factor(Depth_category), y=MC))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
 MC_depth_2022
 
 # DO_depth_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=as.factor(Sample.Depth.category), y=CTD.Dissolved.Oxygen.mg.L))+
@@ -148,9 +181,15 @@ MC_depth_2022
 # DO_depth_2022
 
 Temp_depth_2012_2018 <- ggplot(data=erie_data_2012_2018, aes(x=as.factor(Sample.Depth.category), y=CTD.Temperature.b0C))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2012-2018")
 Temp_depth_2012_2018
 
 Temp_depth_2022 <- ggplot(data=erie_data_2022, aes(x=as.factor(Depth_category), y=Temp))+
-  geom_boxplot()
+  geom_boxplot()+
+  xlab("Sample Depth Category")+
+  ylab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2022")
 Temp_depth_2022
