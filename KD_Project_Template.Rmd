@@ -145,6 +145,14 @@ Lake Erie is the shallowest of the great lakes with an average depth of 19 meter
 
 # Dataset Information
 
+The NOAA Great Lakes Environmental Research Laboratory (NOAA GLERL) is a federal research laboratory designed to monitor and research the ecology and hydrology of the Great Lakes Region. The NOAA GLERL provides data critical to studying the presence and harmful impacts of algal blooms in the great lakes region.
+
+The NOAA GLERL studies the movement, size, and concentration of toxins and nutrients typically associated with HABs, such as microcystin, nitrogen, phycocyanin, and chlorophyll. They also measure other factors that impact HABs, such as temperature and Dissolved oxygen (DO) concentrations. The lab’s primary goal is to characterize the growth and abundance of microcystin concentrations and how their presence affects the toxicity of the lake.
+
+The data from Western Lake Erie comes from nine sites sampled weekly, four of which have buoys collecting data continuously at 15-minute intervals. Only some sampled areas gather data on the same parameters, resulting in occasional missing data. 
+
+The sourced data set contains information on parameters ranging from 2012 - 2018 and a final data set that monitors the toxin and nutrient concentration from 2022.
+
 
 
 
