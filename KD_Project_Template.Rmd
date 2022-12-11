@@ -14,8 +14,17 @@ Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lak
 
 Table ###. Shapiro-Wilk Test for Normality Results
 
+Table ###. Wilcoxin Rank Sum Test for Bottom versus Surface Depths
+
 \newpage
 \listoffigures 
+
+Figure ###. Microcystin Concentrations at Surface and Bottom Depth for years 2015 through 2018
+
+Figure ###. Chlorophyll a Concentrations at Surface and Bottom Depth for years 2015 through 2018
+
+Figure ###. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018
+
 \newpage
 
 ```{r setup, include=FALSE}
@@ -354,10 +363,9 @@ Ho: Surface depth dissolved oxygen concentrations are <= bottom depth microcysti
 
 HA: Surface depth dissolved oxygen concentrations are > bottom depth microcystin concentrations
 
-Before assessing these claims, a Shapiro-Wilk test for normality was conducted for the microcystin, chlorophyll a, and dissolved oxygen data. The test rejected the null hypothesis which states that the data are normally distributed in all cases as shown in Table ###. In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers for each variable. This test result indicates a failure to reject the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 24800, p-value = 0.1753); a rejection of the null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 78212, p-value = 0.0008634); and a rejection of the null hypothesis which states that dissolved oxygen concentrations at surface depth are less than or equal to dissolved oxygen concentrations at bottom depth (W = 51924, p-value < 2.2e-16). The result for the Wilcoxin Rank Sum Test are shown in Table ###.  
+Before assessing these claims, a Shapiro-Wilk test for normality was conducted for the microcystin, chlorophyll a, and dissolved oxygen data. The test rejected the null hypothesis which states that the data are normally distributed in all cases as shown in Table ###. In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers for each variable. These results can be found in Table ###. 
 
-
-```{r, include = FALSE}
+```{r, include=FALSE}
 #test for normality of data
 shapiro.microcystin <- shapiro.test(bottom_surface_Erie$Dissolved.Microcystin.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
 
@@ -393,6 +401,7 @@ colnames(shapiro.10_round) <- c('Statistic','P-Value','Data')
 shapiro_reorder <- shapiro.10_round[, c(3, 1, 2)]
 
 ```
+
 ***Table ###. Shapiro-Wilk Test for Normality Results***
 
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
@@ -400,7 +409,6 @@ gt(shapiro_reorder) %>%
   tab_header(
     title = "Shapiro-Wilk Test Results")
 ```
-
 
 ```{r, include = FALSE}
 #Drop NAs
@@ -415,25 +423,18 @@ bottom_surface_Erie_dropNA_DO <- bottom_surface_Erie %>%
   drop_na(CTD.Dissolved.Oxygen.mg.L)
 ```
 
-
 ```{r, include = FALSE}
 #Microcystin: surface vs bottom
 
 wilcox_microcystin <- wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 
 wilcox_microcystin
-```
 
-```{r, include = FALSE}
 #CHLa: surface vs bottom
 
 wilcox_chla <- wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 
 wilcox_chla
-```
-
-```{r, include = FALSE}
-#DO: surface vs bottom
 
 wilcox_DO <- wilcox.test(CTD.Dissolved.Oxygen.mg.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_DO, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 
@@ -441,7 +442,7 @@ wilcox_DO
 ```
 
 ```{r, include=FALSE}
-#Shapiro-wilk test table formatting
+#Wilcoxin Rank Sum test table formatting
 wilcox.1 <- rbind(wilcox_microcystin, wilcox_chla, wilcox_DO)
 wilcox<- as.data.frame(wilcox.1)
 
@@ -475,6 +476,8 @@ gt(wilcox_reorder) %>%
     title = "Wilcoxin Rank Sum Test Results")
 ```
 
+When looking at microcystin concentrations at surface and bottom depths, the Wilcoxin Rank Sum test showed a nonsignificant result and thus a failure to reject the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 24800, p-value = 0.1753). Figure ### shows these data. When looking at chlorophyll a concentrations at surface and bottom depths, the Wilcoxin Rank Sum test showed a significant result and a rejection of the null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 78212, p-value = 0.0008634). Figure ### shows these data. Lastly, when looking at dissolved oxygen concentrations, the Wilcoxin Rank Sum test showed a significant result and a rejection of the null hypothesis which states that dissolved oxygen concentrations at surface depth are less than or equal to dissolved concentrations at bottom depth (W = 51924, p-value < 2.2e-16). Figure ### shows these data.
+
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #Microcystin boxplot
 Microcystin_SB_plot <- ggplot(bottom_surface_Erie_dropNA_microcystin)+ 
@@ -484,7 +487,7 @@ Microcystin_SB_plot <- ggplot(bottom_surface_Erie_dropNA_microcystin)+
 
 print(Microcystin_SB_plot)
 ```
-
+***Figure ###. Microcystin Concentrations at Surface and Bottom Depth for years 2015 through 2018***
 
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #CHLa boxplot: surface vs bottom
@@ -496,6 +499,8 @@ CHLa_SB_plot <- ggplot(bottom_surface_Erie_dropNA_CHLa)+
 print(CHLa_SB_plot)
 ```
 
+***Figure ###. Chlorophyll a Concentrations at Surface and Bottom Depth for years 2015 through 2018***
+
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #DO boxplot: surface vs bottom
 DO_SB_plot <- ggplot(bottom_surface_Erie_dropNA_DO)+ 
@@ -504,6 +509,9 @@ DO_SB_plot <- ggplot(bottom_surface_Erie_dropNA_DO)+
 
 print(DO_SB_plot)
 ```
+
+***Figure ###. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018***
+
 
 
 \newpage
