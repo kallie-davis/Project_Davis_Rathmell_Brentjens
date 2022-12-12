@@ -213,7 +213,7 @@ The sourced data set contains information on parameters ranging from 2012 - 2018
 # Exploratory Analysis 
 
 ```{r}
-
+##histograms here
 ```
 
 
