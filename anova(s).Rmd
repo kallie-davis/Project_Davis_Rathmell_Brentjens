@@ -1,0 +1,74 @@
+---
+title: "anova!"
+author: "Dori Rathmell"
+date: "`r Sys.Date()`"
+output: pdf_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+
+getwd()
+library(tidyverse)
+#install.packages(zoo)
+library(zoo)
+library(lubridate)
+#install.packages('trend')
+library(trend)
+#install.packages('Kendall')
+library(Kendall)
+knitr::opts_chunk$set(echo = TRUE)
+
+Erie_timeseries <- read.csv("./Data/Processed/Erie_2012_2018_processed.csv")
+
+colnames(Erie_timeseries)
+Erie_timeseries$Date <- as.Date(Erie_timeseries$Date, format = '%m/%d/%Y')
+class(Erie_timeseries$Date)
+
+Erie_timeseries_month <-
+  Erie_timeseries %>% 
+  mutate(Month = month(Date))%>%
+  mutate(Year = year(Date))
+
+#Microcystin Anova!!!!
+micro_month_anova <- aov(data = Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Month)
+summary(micro_month_anova)
+
+micro_year_anova <- aov(data=Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Year)
+summary(micro_year_anova)
+
+Micro_monthlyLM <- lm(data = Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Month)
+summary(Micro_monthlyLM)
+
+plot(micro_month_anova)
+plot(micro_year_anova)
+plot(Micro_monthlyLM)
+#Chlorophyll anovas
+
+chloro_anova_month <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ Month)
+summary(chloro_anova_month)
+
+chloro_anova_year <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ Year)
+summary(chloro_anova_year)
+
+chloro_lm_year <- lm(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L~Month)
+summary(chloro_lm_year)
+plot(chloro_lm_year)
+
+plot(chloro_anova_year)
+
+#DO ANOVAS!
+colnames(Erie_timeseries_month)
+DO_anova_month <- aov(data=Erie_timeseries_month, CTD.Dissolved.Oxygen.mg.L ~ Month)
+summary(DO_anova_month)
+plot(DO_anova_month)
+
+DO_anova_year <- aov(data=Erie_timeseries_month, CTD.Dissolved.Oxygen.mg.L~Year)
+summary(DO_anova_year)
+plot(DO_anova_year)
+
+
+```
+
+
