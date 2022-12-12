@@ -135,27 +135,27 @@ bottom_surface_Erie <- bottom_surface_Erie %>%
 Erie_Data_2022 <- read.csv("./Data/Raw/2022_WLE_Weekly_Datashare_CSV.csv")
 
 ##changing character columns to numeric
-class(Erie_data$Temp_C)
-Erie_data$Temp_C <- as.numeric(Erie_data$Temp_C)
+class(Erie_Data_2022$Temp_C)
+Erie_Data_2022$Temp_C <- as.numeric(Erie_Data_2022$Temp_C)
 
-class(Erie_data$DO_mgL.1)
-Erie_data$DO_mgL.1 <- as.numeric(Erie_data$DO_mgL.1)
+class(Erie_Data_2022$DO_mgL.1)
+Erie_Data_2022$DO_mgL.1 <- as.numeric(Erie_Data_2022$DO_mgL.1)
 
-class(Erie_data$Dissolved_Microcystin_ugL.1)
-Erie_data$Dissolved_Microcystin_ugL.1 <- 
-  as.numeric(Erie_data$Dissolved_Microcystin_ugL.1)
+class(Erie_Data_2022$Dissolved_Microcystin_ugL.1)
+Erie_Data_2022$Dissolved_Microcystin_ugL.1 <- 
+  as.numeric(Erie_Data_2022$Dissolved_Microcystin_ugL.1)
 
-class(Erie_data$Extracted_CHLa_ugL.1)
+class(Erie_Data_2022$Extracted_CHLa_ugL.1)
 
-class(Erie_data$Extracted_PC_ugL.1)
-Erie_data$Extracted_PC_ugL.1 <- as.numeric(Erie_data$Extracted_PC_ugL.1)
+class(Erie_Data_2022$Extracted_PC_ugL.1)
+Erie_Data_2022$Extracted_PC_ugL.1 <- as.numeric(Erie_Data_2022$Extracted_PC_ugL.1)
 
 ##creating subset
-Erie_data_subset <- data_frame(Erie_data$Date, Erie_data$Sample_Depth_category, 
-                               Erie_data$Temp_C, Erie_data$DO_mgL.1,
-                          Erie_data$Dissolved_Microcystin_ugL.1,
-                          Erie_data$Extracted_CHLa_ugL.1, 
-                          Erie_data$Extracted_PC_ugL.1)
+Erie_data_subset <- data_frame(Erie_Data_2022$Date, Erie_Data_2022$Sample_Depth_category, 
+                               Erie_Data_2022$Temp_C, Erie_Data_2022$DO_mgL.1,
+                          Erie_Data_2022$Dissolved_Microcystin_ugL.1,
+                          Erie_Data_2022$Extracted_CHLa_ugL.1, 
+                          Erie_Data_2022$Extracted_PC_ugL.1)
 
 ##changing column names
 colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "Chla", "PC")
@@ -167,8 +167,8 @@ Erie_data_subset <- Erie_data_subset %>%
 
 ##creating processed dataset
 write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
-Erie_data_processed <- read.csv("./Data/Processed/Erie_2022_processed.csv")
-#View(Erie_data_processed)
+Erie_Data_2022 <- read.csv("./Data/Processed/Erie_2022_processed.csv")
+#View(Erie_Data_2022)
 
 ```
 
@@ -195,26 +195,144 @@ Lake Erie is the shallowest of the great lakes with an average depth of 19 meter
 
 # Dataset Information
 
-The NOAA Great Lakes Environmental Research Laboratory (NOAA GLERL) is a federal research laboratory designed to monitor and research the ecology and hydrology of the Great Lakes Region. The NOAA GLERL provides data critical to studying the presence and harmful impacts of algal blooms in the great lakes region.
+The National Oceanic and Atmospheric Administration Great Lakes Environmental Research Laboratory (NOAA GLERL) is a federal research laboratory designed to monitor and research the ecology and hydrology of the Great Lakes Region. The NOAA GLERL provides data critical to studying the presence and harmful impacts of algal blooms in the great lakes region.
 
 The NOAA GLERL studies the movement, size, and concentration of toxins and nutrients typically associated with HABs, such as microcystin, nitrogen, phycocyanin, and chlorophyll. They also measure other factors that impact HABs, such as temperature and Dissolved oxygen (DO) concentrations. The lab’s primary goal is to characterize the growth and abundance of microcystin concentrations and how their presence affects the toxicity of the lake.
 
 The data from Western Lake Erie comes from nine sites sampled weekly, four of which have buoys collecting data continuously at 15-minute intervals. Only some sampled areas gather data on the same parameters, resulting in occasional missing data. 
 
-The sourced data set contains information on parameters ranging from 2012 - 2018 and a final data set that monitors the toxin and nutrient concentration from 2022.
+The sourced data set contains information on parameters ranging from 2012 - 2018 and a final data set that monitors the toxin and nutrient concentration from 2022. The variables we will analyze are displayed below with their units of measurement. 
 
+***Table ?. Variables of interest and associated units***
+```{r, include=FALSE}
+#Create table: variables of interest and units
+#Create dataframe 
+data_df_2012_2018 <- data_frame(
+  Variable = c("Dissolved Oxygen", "Temperature", "Dissolved Microcystin", "Chlorophyll a", "Nitrate + Nitrite", "Total Dissolved Phosphorus"),
+  Unit = c("milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter"))
+#View(data_df_2012_2018)
 
+#Create table
+data_df_2012_2018 %>%
+gt() %>%
+  cols_width(
+    c(Variable)~ px(120),
+    c(Unit)~ px(150),
+    everything() ~ px(90))%>%
+  
+  tab_header(
+    title = md("Variables of Interest")) %>%
 
+  fmt_passthrough (columns=c(Variable)) %>%
+  fmt_passthrough(columns = c(Unit)) %>%
 
+cols_label(
+    Variable = "",
+    Unit = "Unit") %>%
+
+cols_align(
+    align = "center")
+
+```
 
 
 \newpage
 
 # Exploratory Analysis 
 
+We created histograms to illustrate the distribution of our variables of interest. Chlorophyll a values from 2012-2018 are largely concentrated below 100 $\mu g/L$ (Fig. 1). We discovered an outlier from August 2015, when chlorophyll a was at 6784 $\mu$g/L. We removed this outlier in the second histogram to better display the distribution of data.
+
 ```{r}
-##histograms here
+#Histograms showing distribution of variables 
+#Chlorophyll a: 2012-2018
+chla_hist_2012_2018 <- ggplot(data=Erie_Data_2012_2018, aes(x=Extracted.Chlorophyll.a.b5g.L))+
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
+chla_hist_2012_2018
+
+chla_hist_no_outlier <- ggplot(data=subset(Erie_Data_2012_2018, !Extracted.Chlorophyll.a.b5g.L>6000), aes(x=Extracted.Chlorophyll.a.b5g.L))+
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
+chla_hist_no_outlier
+##easier to see distribution of chl a when outlier is removed
+
 ```
+***Figure 1. Chlorophyll a distribution from 2012-2018. Bottom figure excludes 6784 $\mu$g/L$ outlier from August, 2015.***
+
+Similarly, chlorophyll a measurements from 2022 are clustered below 100 $\mu g/L$, with few observations between 150 and 272 $\mu g/L$ (Fig. 2). 
+
+```{r}
+#Chlorophyll a: 2022
+chla_hist_2022 <- ggplot(data=Erie_Data_2022, aes(x=Chla))+
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
+chla_hist_2022
+
+```
+***Figure 2. Chlorophyll a distribution in 2022.***
+
+Temperature measurements in both the 2012-2018 and 2022 datasets predominantly fall between 20 and 25 degrees Celsius (Fig. 3).
+
+```{r}
+#Temperature: 2012-2018
+temp_hist_2012_2018 <- ggplot(data=Erie_Data_2012_2018, aes(x=CTD.Temperature.b0C))+
+  geom_histogram(bins=50, color="black", fill="lightgray") +
+  xlab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2012-2018")
+temp_hist_2012_2018
+
+#Temperature: 2022
+temp_hist_2022 <- ggplot(data=Erie_Data_2022, aes(x=Temp))+
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Temperature" ~ "("*degree*C*")"))+
+  ggtitle("2022")
+temp_hist_2022
+
+```
+***Figure 3. Temperature distribution from 2012-2018 (top) and in 2022 (bottom).***
+
+Dissolved microcystin concentrations between 2012 and 2018 were strongly right-skewed, with the majority of observations falling below 0.25 $\mu g/L$ and very few between 1.3 and 2 $\mu g/L$. Microcystin measurements in 2022 are mainly below 0.5 $\mu g/L$ and exhibit a narrower range of values (Fig. 4).
+
+```{r}
+#Microcystin: 2012-2018
+mc_hist_2012_2018 <- ggplot(data=Erie_Data_2012_2018, aes(x=Dissolved.Microcystin.b5g.L))+
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2012-2018")
+mc_hist_2012_2018
+
+#Microcystin: 2022
+mc_hist_2022 <- ggplot(data=Erie_Data_2022, aes(x=MC))+
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab(expression("Microcystin" ~ "("*mu*"g/L)"))+
+  ggtitle("2022")
+mc_hist_2022
+
+```
+***Figure 4. Microcystin distribution from 2012-2018 (top) and in 2022 (bottom).***
+
+Dissolved oxygen measurements from 2012-2018 are concentrated around 8 mg/L, while 2022 seems to have overall lower dissolved oxygen values, mainly concentrated between 7 and 8 mg/L (Figure 5).
+
+```{r}
+#Dissolved oxygen: 2012-2018
+do_hist_2012_2018 <- ggplot(data=Erie_Data_2012_2018, aes(x=CTD.Dissolved.Oxygen.mg.L))+
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab("Dissolved Oxygen (mg/L)") +
+  ggtitle("2012-2018")
+do_hist_2012_2018
+
+#Dissolved oxygen: 2022
+do_hist_2022 <- ggplot(data=Erie_Data_2022, aes(x=DO))+
+  geom_histogram(bins=50, color="black", fill="lightgray")+
+  xlab("Dissolved Oxygen (mg/L)") +
+  ggtitle("2022")
+do_hist_2022
+
+```
+***Figure 4. Microcystin distribution from 2012-2018 (top) and in 2022 (bottom).***
 
 
 To begin exploration of the questions, a summary statistics table (Table 1) was generated to show the number of observations, mean, standard deviation, and median within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature. This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occuring within given years. 
@@ -243,9 +361,6 @@ summary.Erie<-Erie.select.longer%>%
     Mean=mean(value, na.rm=TRUE),
     SD=sd(value, na.rm=TRUE),
     Median=median(value, na.rm=TRUE))
-
-#Adding column for units; maybe make separate table with just variables of interest and units?
-summary.Erie$Unit <- c("milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter")
    
 head(summary.Erie)
 
@@ -262,7 +377,7 @@ summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable,
                                          Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
                                          CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
                                          Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
-                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
+                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L)",
                                          CTD.Temperature.b0C= "Temperature (deg C)")
 ```
 
@@ -301,6 +416,8 @@ cols_label(
   
 
 ```
+
+ADD LINE PLOTS HERE
 
 To explore the third question, a summary statistics table (Table 2) was generated to show the number of observations, mean, standard deviation, and median within each group of interest (i.e., surface and bottom depth categories). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends for both bottom and surface depth observations. 
 
@@ -414,6 +531,7 @@ Ho: Surface depth dissolved oxygen concentrations are <= bottom depth microcysti
 
 HA: Surface depth dissolved oxygen concentrations are > bottom depth microcystin concentrations
 
+**Assessing distribution of data**
 Before assessing these claims, a Shapiro-Wilk test for normality was conducted for the microcystin, chlorophyll a, and dissolved oxygen data. The test rejected the null hypothesis which states that the data are normally distributed in all cases as shown in Table ###. In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers for each variable. These results can be found in Table ###. 
 
 ```{r, include=FALSE}
@@ -519,8 +637,8 @@ colnames(wilcox.10_round) <- c('Statistic','P-Value','Data')
 wilcox_reorder <- wilcox.10_round[, c(3, 1, 2)]
 
 ```
-***Table ###. Wilcoxin Rank Sum Test for Bottom versus Surface Depths***
 
+***Table ###. Wilcoxin Rank Sum Test for Bottom versus Surface Depths***
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 gt(wilcox_reorder) %>% 
   tab_header(
@@ -562,6 +680,95 @@ print(DO_SB_plot)
 ```
 
 ***Figure ###. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018***
+
+PUT TIME STUFF BEFORE GLMs
+
+\newpage
+**Generalized linear modeling**
+To determine the variables driving chlorophyll a and microcystin concentration in Western Lake Erie, we conducted generalized linear modelling, taking into account temperature, nitrate and nitrite concentration, and total dissolved phosphorus concentration. We analyzed these trends for the entire 2012-2018 dataset, and for the years 2013, 2015, and 2017 specifically. The linear model results are shown in Table ? below. 
+
+```{r, include=FALSE}
+#Total dataset linear model results
+#Chlorophyll a
+Erie_chla_temp_lm <- lm(data=Erie_Data_2012_2018, Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_chla_temp_lm)
+
+Erie_chla_NO23_lm <- lm(data=Erie_Data_2012_2018, Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_chla_NO23_lm)
+
+Erie_chla_TDP_lm <- lm(data=Erie_Data_2012_2018, Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_chla_TDP_lm)
+
+#Microcystin
+Erie_MC_temp_lm <- lm(data=Erie_Data_2012_2018, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_MC_temp_lm)
+
+Erie_MC_NO23_lm <- lm(data=Erie_Data_2012_2018, Dissolved.Microcystin.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_MC_NO23_lm)
+
+Erie_MC_TDP_lm <- lm(data=Erie_Data_2012_2018, Dissolved.Microcystin.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_MC_TDP_lm)
+
+```
+
+```{r}
+#2013 linear model results
+#Chlorophyll a
+Erie_chla_temp_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2013"), Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_chla_temp_lm)
+
+Erie_chla_NO23_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2013"), Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_chla_NO23_lm)
+
+Erie_chla_TDP_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2013"), Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_chla_TDP_lm)
+
+#Can't measure microcystin for 2013 (none recorded)
+
+#2015 linear model results
+#Chlorophyll a
+Erie_chla_temp_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_chla_temp_lm)
+
+Erie_chla_NO23_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_chla_NO23_lm)
+
+Erie_chla_TDP_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_chla_TDP_lm)
+
+#Microcystin
+Erie_MC_temp_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_MC_temp_lm)
+
+Erie_MC_NO23_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Dissolved.Microcystin.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_MC_NO23_lm)
+
+Erie_MC_TDP_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2015"), Dissolved.Microcystin.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_MC_TDP_lm)
+
+#2017 linear model results
+#Chlorophyll a
+Erie_chla_temp_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_chla_temp_lm)
+
+Erie_chla_NO23_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_chla_NO23_lm)
+
+Erie_chla_TDP_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_chla_TDP_lm)
+
+#Microcystin
+Erie_MC_temp_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
+summary(Erie_MC_temp_lm)
+
+Erie_MC_NO23_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Dissolved.Microcystin.b5g.L ~ Nitrate..Nitrite.mg.N.L)
+summary(Erie_MC_NO23_lm)
+
+Erie_MC_TDP_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2017"), Dissolved.Microcystin.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
+summary(Erie_MC_TDP_lm)
+
+```
+
 
 
 

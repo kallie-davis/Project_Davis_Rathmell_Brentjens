@@ -121,8 +121,10 @@ do_hist_2022
 
 
 ##year box plots
-# chla_year <- ggplot(data=erie_data_2012_2018, aes(x=as.factor(year), y=Extracted.Chlorophyll.a.b5g.L))+
-#   geom_boxplot()
+# chla_year <- ggplot(data=Erie_Data_2012_2018, aes(x=as.factor(Year), y=Extracted.Chlorophyll.a.b5g.L))+
+#   geom_boxplot()+
+#   xlab("Year")+
+#   ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)"))
 # chla_year
 # 
 # chla_year_no_outlier <- ggplot(data=subset(erie_data_2012_2018, !Extracted.Chlorophyll.a.b5g.L>6000), aes(x=as.factor(year), y=Extracted.Chlorophyll.a.b5g.L))+
