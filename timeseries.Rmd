@@ -22,7 +22,7 @@ timeseries_plottheme <- theme_gray(base_size = 12) +
         legend.position = "right")
 theme_set(timeseries_plottheme)
 
-Erie_timeseries <- read.csv("./Data/Processed/Erie_2022_processed.csv")
+Erie_timeseries <- read.csv("./Data/Processed/Erie_2012_2018_processed.csv")
 
 Erie_timeseries$Date <- as.Date(Erie_timeseries$Date, format = '%m/%d/%Y')
 class(Erie_timeseries$Date)
@@ -49,7 +49,7 @@ f_month2 <- first(Erie_timeseries_month$Month)
 f_year2 <- first(Erie_timeseries_month$Year)
 
 Erie_Daily.ts <- ts(Erie_timeseries_1$Chlorophyll, 
-                             start=c(f_year,f_month, f_day),frequency=180) 
+                             start=c(f_year,f_month, f_day),frequency=30) 
 Erie_monthly.ts <- ts(Erie_timeseries_month$meanchloro,
                                start=c(f_month2, f_year2),frequency = 3)
 
