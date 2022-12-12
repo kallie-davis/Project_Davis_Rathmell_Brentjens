@@ -34,13 +34,7 @@ getwd()
 library(tidyverse)
 #install.packages("lubridate")
 library(lubridate)
-#install.packages("zoo")
-library(zoo)
-#install.packages("trend")
-library(trend)
 library(ggplot2)
-#install.packages("Kendall")
-library(Kendall) 
 #install.packages("gt")
 library(gt)
 #install.packages("pixiedust")
@@ -94,7 +88,9 @@ Erie_Data_2012_2018 <- data_frame(Erie_Data_2012_2018$Date,
                                   Erie_Data_2012_2018$Photo.active.radiation,
                                   Erie_Data_2012_2018$Sample.Temperature.b0C,
                                   Erie_Data_2012_2018$CTD.Temperature.b0C)
+
 colnames(Erie_Data_2012_2018) <- gsub("Erie_Data_2012_2018", "", colnames(Erie_Data_2012_2018))
+
 colnames(Erie_Data_2012_2018) <- gsub("[//$]", "", colnames(Erie_Data_2012_2018))
 ```
 
@@ -115,11 +111,11 @@ Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>%
 
 #Add a year column
 Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>% 
-  mutate(Year = format(Date, "%Y"))
+  mutate(Year = year(Date))
 ```
 
 ```{r, include=FALSE}
-#write.csv(Erie_Data_2012_2018_2, "./Data/Processed/Erie_2012_2018_2_processed.csv")
+#write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_2_processed.csv")
 ```
 
 
@@ -133,6 +129,49 @@ bottom_surface_Erie <- bottom_surface_Erie %>%
   filter(Year == "2015" | Year == "2016" | Year == "2017" | Year == "2018")
 
 ```
+
+```{r, include=FALSE}
+##2022 data
+Erie_Data_2022 <- read.csv("./Data/Raw/2022_WLE_Weekly_Datashare_CSV.csv")
+
+##changing character columns to numeric
+class(Erie_data$Temp_C)
+Erie_data$Temp_C <- as.numeric(Erie_data$Temp_C)
+
+class(Erie_data$DO_mgL.1)
+Erie_data$DO_mgL.1 <- as.numeric(Erie_data$DO_mgL.1)
+
+class(Erie_data$Dissolved_Microcystin_ugL.1)
+Erie_data$Dissolved_Microcystin_ugL.1 <- 
+  as.numeric(Erie_data$Dissolved_Microcystin_ugL.1)
+
+class(Erie_data$Extracted_CHLa_ugL.1)
+
+class(Erie_data$Extracted_PC_ugL.1)
+Erie_data$Extracted_PC_ugL.1 <- as.numeric(Erie_data$Extracted_PC_ugL.1)
+
+##creating subset
+Erie_data_subset <- data_frame(Erie_data$Date, Erie_data$Sample_Depth_category, 
+                               Erie_data$Temp_C, Erie_data$DO_mgL.1,
+                          Erie_data$Dissolved_Microcystin_ugL.1,
+                          Erie_data$Extracted_CHLa_ugL.1, 
+                          Erie_data$Extracted_PC_ugL.1)
+
+##changing column names
+colnames(Erie_data_subset) <- c("Date", "Depth_category", "Temp", "DO", "MC", "Chla", "PC")
+View(Erie_data_subset)
+
+##filtering out scum
+Erie_data_subset <- Erie_data_subset %>%
+  filter(!Depth_category=="Scum")
+
+##creating processed dataset
+write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
+Erie_data_processed <- read.csv("./Data/Processed/Erie_2022_processed.csv")
+#View(Erie_data_processed)
+
+```
+
 
 # Rationale and Research Questions
 
@@ -173,11 +212,18 @@ The sourced data set contains information on parameters ranging from 2012 - 2018
 
 # Exploratory Analysis 
 
+```{r}
+
+```
+
+
 To begin exploration of the questions, a summary statistics table (Table 1) was generated to show the number of observations, mean, standard deviation, and median within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature. This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occuring within given years. 
 
 ***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018***
 
 ```{r, include = FALSE, message = FALSE, warning = FALSE}
+#Load processed dataset
+Erie_Data_2012_2018 <- read.csv("./Data/Processed/Erie_2012_2018_2_processed.csv")
 
 # Select Variables of Interest
 Erie.select<-Erie_Data_2012_2018%>%
@@ -197,6 +243,9 @@ summary.Erie<-Erie.select.longer%>%
     Mean=mean(value, na.rm=TRUE),
     SD=sd(value, na.rm=TRUE),
     Median=median(value, na.rm=TRUE))
+
+#Adding column for units; maybe make separate table with just variables of interest and units?
+summary.Erie$Unit <- c("milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter", "milligrams/Liter", "Celsius", "micrograms/Liter", "micrograms/Liter", "milligrams of Nitrogen/Liter", "micrograms of Phosphorus/Liter")
    
 head(summary.Erie)
 
