@@ -665,7 +665,7 @@ When looking at microcystin concentrations at surface and bottom depths, the Wil
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #Microcystin boxplot
 Microcystin_SB_plot <- ggplot(bottom_surface_Erie_dropNA_microcystin)+ 
-  geom_boxplot(aes(x = Year, y=Dissolved.Microcystin.b5g.L, fill = Sample.Depth.category))+
+  geom_boxplot(aes(x = as.factor(Year), y=Dissolved.Microcystin.b5g.L, fill = Sample.Depth.category))+
   ylim(0,0.75)+
   labs(y = "Microcystin Concentration (ug/L)", x = "Sample Depth Category", title = "Microcystin Concentration at Surface and Bottom Depths")
 
@@ -676,7 +676,7 @@ print(Microcystin_SB_plot)
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #CHLa boxplot: surface vs bottom
 CHLa_SB_plot <- ggplot(bottom_surface_Erie_dropNA_CHLa)+ 
-  geom_boxplot(aes(x = Year, y=Extracted.Chlorophyll.a.b5g.L, fill = Sample.Depth.category))+
+  geom_boxplot(aes(x = as.factor(Year), y=Extracted.Chlorophyll.a.b5g.L, fill = Sample.Depth.category))+
   ylim(0,100)+
   labs(y = "Extracted Chlorophyll a Concentration (ug/L)", x = "Sample Depth Category", title = "Extracted Chlorophyll a Concentration at Surface and Bottom Depths")
 
@@ -688,7 +688,7 @@ print(CHLa_SB_plot)
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 #DO boxplot: surface vs bottom
 DO_SB_plot <- ggplot(bottom_surface_Erie_dropNA_DO)+ 
-  geom_boxplot(aes(x = Year, y=CTD.Dissolved.Oxygen.mg.L, fill = Sample.Depth.category))+
+  geom_boxplot(aes(x = as.factor(Year), y=CTD.Dissolved.Oxygen.mg.L, fill = Sample.Depth.category))+
   labs(y = "Dissolved Oxygen Concentration (mg/L)", x = "Sample Depth Category", title = "Dissolved Oxygen Concentration at Surface and Bottom Depths")
 
 print(DO_SB_plot)
