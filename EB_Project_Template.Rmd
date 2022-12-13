@@ -789,44 +789,44 @@ summary(Erie_MC_TDP_lm)
 #2014 linear model results
 #Chlorophyll a
 Erie_chla_temp_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
-summary(Erie_chla_temp_lm)
+summary(Erie_chla_temp_2014_lm)
 
 Erie_chla_NO23_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
-summary(Erie_chla_NO23_lm)
+summary(Erie_chla_NO23_2014_lm)
 
 Erie_chla_TDP_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
-summary(Erie_chla_TDP_lm)
+summary(Erie_chla_TDP_2014_lm)
 
 #Microcystin
 Erie_MC_temp_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
-summary(Erie_MC_temp_lm)
+summary(Erie_MC_temp_2014_lm)
 
 Erie_MC_NO23_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Dissolved.Microcystin.b5g.L ~ Nitrate..Nitrite.mg.N.L)
-summary(Erie_MC_NO23_lm)
+summary(Erie_MC_NO23_2014_lm)
 
 Erie_MC_TDP_2014_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2014"), Dissolved.Microcystin.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
-summary(Erie_MC_TDP_lm)
+summary(Erie_MC_TDP_2014_lm)
 
 #2018 linear model results
 #Chlorophyll a
 Erie_chla_temp_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Extracted.Chlorophyll.a.b5g.L ~ CTD.Temperature.b0C)
-summary(Erie_chla_temp_lm)
+summary(Erie_chla_temp_2018_lm)
 
 Erie_chla_NO23_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Extracted.Chlorophyll.a.b5g.L ~ Nitrate..Nitrite.mg.N.L)
-summary(Erie_chla_NO23_lm)
+summary(Erie_chla_NO23_2018_lm)
 
 Erie_chla_TDP_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Extracted.Chlorophyll.a.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
-summary(Erie_chla_TDP_lm)
+summary(Erie_chla_TDP_2018_lm)
 
 #Microcystin
 Erie_MC_temp_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
-summary(Erie_MC_temp_lm)
+summary(Erie_MC_temp_2018_lm)
 
 Erie_MC_NO23_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Dissolved.Microcystin.b5g.L ~ Nitrate..Nitrite.mg.N.L)
-summary(Erie_MC_NO23_lm)
+summary(Erie_MC_NO23_2018_lm)
 
 Erie_MC_TDP_2018_lm <- lm(data=filter(Erie_Data_2012_2018, Year=="2018"), Dissolved.Microcystin.b5g.L ~ Total.Dissolved.Phosphorus.b5g.P.L)
-summary(Erie_MC_TDP_lm)
+summary(Erie_MC_TDP_2018_lm)
 
 ```
 
@@ -886,14 +886,28 @@ linear_model_results <- data_frame(linear_model_results$term, linear_model_resul
 
 colnames(linear_model_results) = c("Term", "Coefficient", "Standard_error", "p_value")
 
-linear_model_results$year = c("total", "total", "total","total", "total", "total", "total", "total", "total","total", "total", "total", "2014", "2014", "2014","2014", "2014", "2014", "2014", "2014", "2014","2014", "2014", "2014", "2018", "2018", "2018","2018", "2018", "2018", "2018", "2018", "2018","2018", "2018", "2018")
+linear_model_results$year = c("Total", "Total", "Total","Total", "Total", "Total", "Total", "Total", "Total","Total", "Total", "Total", "2014", "2014", "2014","2014", "2014", "2014", "2014", "2014", "2014","2014", "2014", "2014", "2018", "2018", "2018","2018", "2018", "2018", "2018", "2018", "2018","2018", "2018", "2018")
+
+linear_model_results$response_variable = c("Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin")
+
+#Changing variable names
+linear_model_results$Term[linear_model_results$Term == "(Intercept)"] <- "Intercept"
+
+linear_model_results$Term[linear_model_results$Term == "CTD.Temperature.b0C"] <- "Temperature"
+
+linear_model_results$Term[linear_model_results$Term == "Nitrate..Nitrite.mg.N.L"] <- "Nitrate + Nitrite"
+
+linear_model_results$Term[linear_model_results$Term == "Total.Dissolved.Phosphorus.b5g.P.L"] <- "Total Dissolved Phosphorus"
 
 linear_model_results <- linear_model_results %>%
-  group_by(year)
+  group_by(year, response_variable)
+
+###remove intercepts??
 
 ```
 
-```{r, include=FALSE}
+***Table ###. Linear model results of relationships between response variables: chlorophyll a and microcystin, and explanatory variables: temperature, nitrate and nitrite, and total dissolved phosphorus concentration***
+```{r, error=FALSE, message=FALSE, echo=FALSE}
 #Create table of linear model results
 linear_model_results %>%
 gt() %>%
@@ -912,14 +926,25 @@ gt() %>%
   fmt_number(columns = c(Coefficient), decimals = 5) %>%
   fmt_number(columns = c(Standard_error), decimals = 5) %>%
   fmt_number(columns = c(p_value), decimals = 3) %>%
+  
+   tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      columns = p_value,
+      rows = p_value <= 0.05)) %>%
+  
+  sub_values(p_value = c(74, 500), replacement = 150)
 
 cols_label(
-    Term = "",
+    Term = "Explanatory variable",
     Coefficient = "Coefficient",
     Standard_error = "Standard error",
     p_value = "p-value")
 
 ```
+
+\newpage
 
 
 \newpage
