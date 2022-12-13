@@ -172,7 +172,7 @@ Erie_data_subset <- Erie_data_subset %>%
   filter(!Depth_category=="Scum")
 
 ##creating processed dataset
-write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
+#write.csv(Erie_data_subset, "./Data/Processed/Erie_2022_processed.csv")
 Erie_Data_2022 <- read.csv("./Data/Processed/Erie_2022_processed.csv")
 #View(Erie_Data_2022)
 
@@ -753,6 +753,8 @@ temp_plot
 
 It was difficult to visualize annual trends in microcystin, nitrate and nitrite, and total dissolved phosphorus concentrations since data collection is sporadic throughout the seven-year period.
 
+
+
 To assess whether differences in chlorophyll a and temperature between months and years were statistically significant, we conducted two-way ANOVA tests.
 
 [ANOVAs here]
@@ -1044,7 +1046,80 @@ mc_2018_plot
 ***Figure #. Line plot showing relationship between microcystin (y axis) and nitrate + nitrite concentration (x axis) in 2018.***
 
 
-We further used linear modeling to assess the relationships between chlorophyll a and microcystin and water temperature in 2022.  
+We further used linear modeling to assess the relationships between chlorophyll a and microcystin and water temperature in 2022. In line with our hypotheses, both chlorophyll a and microcystin are positively related to water temperature (Table #).
+
+```{r, include=FALSE}
+#Linear model: chlorophyll a and temperature
+Erie_chla_2022_lm <- lm(data=Erie_Data_2022, Chla ~ Temp)
+summary(Erie_chla_2022_lm)
+
+#Linear model: microcystin and temperature
+Erie_mc_2022_lm <- lm(data=Erie_Data_2022, MC ~ Temp)
+summary(Erie_mc_2022_lm)
+
+```
+
+```{r}
+#Create dataframe of linear modeling results
+Erie_chla_2022_lm_df <- tidy(Erie_chla_2022_lm)
+
+Erie_mc_2022_lm_df <- tidy(Erie_mc_2022_lm)
+
+linear_model_results_2022 <- rbind(Erie_chla_2022_lm_df,
+                                   Erie_mc_2022_lm_df)
+
+linear_model_results_2022 <- linear_model_results_2022 %>%
+  filter(!term=="(Intercept)")
+
+linear_model_results_2022 <- data_frame( linear_model_results_2022$estimate, linear_model_results_2022$std.error, linear_model_results_2022$p.value)
+
+colnames(linear_model_results_2022) = c("Coefficient", "Standard_error", "p_value")
+
+linear_model_results_2022$response_variable = c("Chlorophyll a", "Microcystin")
+
+linear_model_results_2022 <- linear_model_results_2022[ , c(4, 1, 2, 3)]
+
+#View(linear_model_results_2022)
+
+```
+
+***Table #. Linear model results of relationships between response variables: chlorophyll a and microcystin, and temperature in 2022***
+```{r}
+#Create table of linear modeling results
+linear_model_results_2022 %>%
+gt() %>%
+ 
+  cols_width(
+    c(response_variable)~ px(120),
+    c(Coefficient)~ px(120),
+    c(Standard_error)~ px(120),
+    c(p_value)~ px(120),
+    everything() ~ px(90))%>%
+
+  tab_header(
+    title = md("2022 temperature linear model results")) %>%
+
+  fmt_passthrough (columns=c(response_variable)) %>%
+  fmt_number(columns = c(Coefficient), decimals = 5) %>%
+  fmt_number(columns = c(Standard_error), decimals = 5) %>%
+  fmt_number(columns = c(p_value), decimals = 3) %>%
+  
+   tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      columns = p_value,
+      rows = p_value <= 0.05)) %>%
+  
+  sub_small_vals() %>%
+
+cols_label(
+    response_variable = "Response variable",
+    Coefficient = "Coefficient",
+    Standard_error = "Standard error",
+    p_value = "p-value")
+
+```
 
 
 \newpage
