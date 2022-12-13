@@ -394,6 +394,7 @@ summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable,
                                          Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
                                          Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L)",
                                          CTD.Temperature.b0C= "Temperature (deg C)")
+
 ```
 
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
@@ -473,6 +474,7 @@ summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable,
                                          Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
                                          Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
                                          CTD.Temperature.b0C= "Temperature (deg C)")
+
 ```
 
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
