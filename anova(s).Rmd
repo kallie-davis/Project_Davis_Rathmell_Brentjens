@@ -18,6 +18,8 @@ library(lubridate)
 library(trend)
 #install.packages('Kendall')
 library(Kendall)
+install.packages('agricolae')
+library(agricolae)
 knitr::opts_chunk$set(echo = TRUE)
 
 Erie_timeseries <- read.csv("./Data/Processed/Erie_2012_2018_processed.csv")
@@ -35,23 +37,44 @@ Erie_timeseries_month <-
 micro_month_anova <- aov(data = Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Month)
 summary(micro_month_anova)
 
-micro_year_anova <- aov(data=Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Year)
+micro_year_anova <- aov(data=Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ as.factor(Year))
 summary(micro_year_anova)
 
 Micro_monthlyLM <- lm(data = Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ Month)
 summary(Micro_monthlyLM)
+
+Micro_yearlyLM <-lm(data = Erie_timeseries_month, Dissolved.Microcystin.b5g.L ~ as.factor(Year))
+summary(Micro_yearlyLM)
+
+
+TukeyHSD(micro_year_anova, conf.level=.95)
+
 
 plot(micro_month_anova)
 plot(micro_year_anova)
 plot(Micro_monthlyLM)
 #Chlorophyll anovas
 
-chloro_anova_month <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ Month)
+chloro_anova_month <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ as.factor(Month))
 summary(chloro_anova_month)
 
-chloro_anova_year <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ Year)
+TukeyHSD(chloro_anova_month, conf.level = .95)
+
+chloro_anova_year <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L ~ as.factor(Year))
 summary(chloro_anova_year)
 
+TukeyHSD(chloro_anova_year, conf.level=.95)
+
+ChloroYear.HSD.test <- HSD.test(chloro_anova_year, "Year", group = TRUE)
+ChloroYear.HSD.test
+
+chloro_anova_temp <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L~ CTD.Temperature.b0C)
+summary(chloro_anova_temp)
+
+TukeyHSD(chloro_anova_temp, conf.level =.95)
+
+colnames(Erie_timeseries_month
+         )
 chloro_lm_year <- lm(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L~Month)
 summary(chloro_lm_year)
 plot(chloro_lm_year)

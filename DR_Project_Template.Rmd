@@ -508,6 +508,11 @@ cols_label(
 ## Question 1: Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
 
 ## Question 2: How does Microcystis and microcystin concentration change over time?
+To examine how microcystin concentrations vary over time, we used anova models to evaluate the statistical significance of the various concentrations of microcystin and chlorophyll over the studied months, years, and temperatures.
+```{r}
+#Microcystin Anova's
+#Microcystin 
+```
 
 ## Question 3: Are there differences between toxin and algae concentrations at different lake depths?
 
