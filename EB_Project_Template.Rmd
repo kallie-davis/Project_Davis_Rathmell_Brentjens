@@ -753,7 +753,65 @@ temp_plot
 
 It was difficult to visualize annual trends in microcystin, nitrate and nitrite, and total dissolved phosphorus concentrations since data collection is sporadic throughout the seven-year period.
 
+We averaged chlorophyll a by month for each year to examine monthly trends. The monthly trends in chlorophyll a were similar across 2014, 2018, and 2022, with chlorophyll a peaking in August. This peak was greater in 2022 than in 2014 and 2018 (Fig. #).
 
+```{r, include=FALSE}
+#Create subset of data
+Erie_data_subset <- data_frame(Erie_Data_2012_2018$Date,
+                               Erie_Data_2012_2018$CTD.Temperature.b0C, 
+                               Erie_Data_2012_2018$CTD.Dissolved.Oxygen.mg.L,
+                               Erie_Data_2012_2018$Dissolved.Microcystin.b5g.L,
+                               Erie_Data_2012_2018$Extracted.Chlorophyll.a.b5g.L, 
+ 
+Erie_Data_2012_2018$Year)
+
+colnames(Erie_data_subset) <- c("Date", "Temp", "DO", "MC", "Chla", "Year")
+#View(Erie_data_subset)
+
+#Group by month and year
+Erie_data_month_means <- Erie_data_subset %>%
+    mutate(Month = month(Date)) %>%
+    group_by(Year, Month) %>%
+    summarize(mean_chla = mean(Chla, na.rm=T),
+              mean_temp = mean(Temp, na.rm=T),
+              mean_mc = mean(MC, na.rm=T), 
+              mean_do = mean(DO, na.rm=T))
+
+#Group by month: 2022 data
+class(Erie_Data_2022$Date)
+Erie_Data_2022$Date <- as.Date(Erie_Data_2022$Date, format="%m/%d/%Y")
+
+Erie_data_2022_means <- Erie_Data_2022 %>%
+  mutate(Month = month(Date)) %>%
+  mutate(Year = year(Date)) %>%
+  group_by(Year, Month) %>%
+  summarize(mean_chla = mean(Chla, na.rm=T),
+            mean_temp = mean(Temp, na.rm=T),
+            mean_mc = mean(MC, na.rm=T),
+            mean_do = mean(DO, na.rm=T))
+
+#Combine subsets
+Erie_data_month_2012_2022 <- rbind(Erie_data_month_means, Erie_data_2022_means)
+#View(Erie_data_month_2012_2022)
+
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#Plot monthly data
+chla_plot_monthly <- ggplot() +
+  geom_line(data=filter(Erie_data_month_2012_2022, Year=="2014" | Year=="2018" | Year=="2022"), aes(x=Month, y=mean_chla, color=as.factor(Year)), linewidth=0.75) +
+  scale_color_manual(values=c("#F8766D", "#00BFC4", "#7CAE00")) +
+  xlab("Month") + 
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)")) +
+  ggtitle("Monthly Trends in Chlorophyll a by Year") +
+  labs(color="Year")
+
+chla_plot_monthly
+
+```
+***Figure ###. Monthly trends in chlorophyll a in 2014, 2018, and 2022.***
+
+It was difficult to visualize annual and monthly trends in microcystin, nitrate and nitrite, and total dissolved phosphorus concentrations since data collection is sporadic throughout the seven-year period.
 
 To assess whether differences in chlorophyll a and temperature between months and years were statistically significant, we conducted two-way ANOVA tests.
 
