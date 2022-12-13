@@ -197,7 +197,7 @@ Lake Erie is the shallowest of the great lakes with an average depth of 19 meter
   
   2. Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
   
-  3. Are there differences between toxin, chlorophyll a, or dissolved oxygen concentration at different lake depths?  
+  3. Are there differences between microcystin, chlorophyll a, or dissolved oxygen concentration at different lake depths?  
 
 
 
@@ -1026,7 +1026,7 @@ cols_label(
 
 
 
-## Question 3: Are there differences between toxin, chlorophyll a, or dissolved oxygen concentration at different lake depths?
+## Question 3: Are there differences between microcystin, chlorophyll a, or dissolved oxygen concentration at different lake depths?
 
 Regarding the third question it is hypothesized that both microcystin, chlorophyll a, and dissolved oxygen concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
 
