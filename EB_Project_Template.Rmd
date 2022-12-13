@@ -759,7 +759,11 @@ To assess whether differences in chlorophyll a and temperature between months an
 
 \newpage
 **Generalized linear modeling**
-To determine the variables driving chlorophyll a and microcystin concentration in Western Lake Erie, we conducted generalized linear modelling, taking into account temperature, nitrate and nitrite concentration, and total dissolved phosphorus concentration. We analyzed these trends for the entire 2012-2018 dataset, and for the years 2014 and 2018 specifically. The linear model results are shown in Table ? below. 
+To determine the variables driving chlorophyll a and microcystin concentration in Western Lake Erie, we conducted generalized linear modelling, taking into account temperature, nitrate and nitrite concentration, and total dissolved phosphorus concentration. We analyzed these trends for the entire 2012-2018 dataset, and for the years 2014 and 2018 specifically. 
+
+The linear model results demonstrate a statistically significant negative relationship between microcystin concentration and temperature for the total dataset, but a significant positive relationship for data collected in 2014. Microcystin concentrations in 2018 were negatiely associated with nitrate and nitrite concentration (Table #). 
+
+In 2018, chlorophyll a was positively associated with both water temperature and nitrate and nitrite concentration. However, in 2014 and across the total dataset, chlorophyll a was not significantly related to any of our explanatory variables (Table #). 
 
 ```{r, include=FALSE}
 #Total dataset linear model results
@@ -891,8 +895,6 @@ linear_model_results$year = c("Total", "Total", "Total","Total", "Total", "Total
 linear_model_results$response_variable = c("Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Chlorophyll a", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin", "Microcystin")
 
 #Changing variable names
-linear_model_results$Term[linear_model_results$Term == "(Intercept)"] <- "Intercept"
-
 linear_model_results$Term[linear_model_results$Term == "CTD.Temperature.b0C"] <- "Temperature"
 
 linear_model_results$Term[linear_model_results$Term == "Nitrate..Nitrite.mg.N.L"] <- "Nitrate + Nitrite"
@@ -900,9 +902,10 @@ linear_model_results$Term[linear_model_results$Term == "Nitrate..Nitrite.mg.N.L"
 linear_model_results$Term[linear_model_results$Term == "Total.Dissolved.Phosphorus.b5g.P.L"] <- "Total Dissolved Phosphorus"
 
 linear_model_results <- linear_model_results %>%
-  group_by(year, response_variable)
+  group_by(year, response_variable) %>%
+  filter(!Term=="(Intercept)")
 
-###remove intercepts??
+#View(linear_model_results)
 
 ```
 
@@ -934,7 +937,7 @@ gt() %>%
       columns = p_value,
       rows = p_value <= 0.05)) %>%
   
-  sub_values(p_value < 0.001, replacement = "<0.001")
+  sub_small_vals() %>%
 
 cols_label(
     Term = "Explanatory variable",
@@ -945,7 +948,7 @@ cols_label(
 ```
 
 \newpage
-
+The plots below demonstrate the linear model results. 
 
 \newpage
 We further used linear modeling to assess the relationships between chlorophyll a and microcystin and water temperature in 2022.  
