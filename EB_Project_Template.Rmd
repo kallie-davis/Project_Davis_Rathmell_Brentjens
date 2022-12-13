@@ -934,7 +934,7 @@ gt() %>%
       columns = p_value,
       rows = p_value <= 0.05)) %>%
   
-  sub_values(p_value = c(74, 500), replacement = 150)
+  sub_values(p_value < 0.001, replacement = "<0.001")
 
 cols_label(
     Term = "Explanatory variable",
