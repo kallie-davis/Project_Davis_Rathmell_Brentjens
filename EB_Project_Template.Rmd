@@ -948,13 +948,106 @@ cols_label(
 ```
 
 \newpage
-The plots below demonstrate the linear model results. 
+The plots below illustrate the linear model results. As shown in Fig. #, the nonsignificant positive relationship between temperature and chlorophyll a from 2012 to 2018 is fairly weak and may be influenced by extremely high observations, like those in 2015. The lack of significant relationship between chlorophyll a and temperature in 2014 which was present in 2018 may be due to the temperature range. There seems to be less variety in temperature measurements in 2018 than 2014 (Fig. #).
 
-\newpage
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#Plotting linear model results 
+#Total dataset: chlorophyll a --> maybe take out?
+chla_plot <- ggplot(data=Erie_Data_2012_2018, aes(x=CTD.Temperature.b0C, y=Extracted.Chlorophyll.a.b5g.L)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F, color="#009E73") +
+  ylim(0, 500) +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)")) +
+  ggtitle("Relationship between Chlorophyll a and Temperature")
+chla_plot
+
+```
+***Figure #. Line plot showing relationship between chlorophyll a (y axis) and water temperature (x axis) between 2012 and 2018. Observations above 500 were removed to improve data visualization***
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#2014 and 2018: chloropyll a
+chla_plot2 <- ggplot(data=filter(Erie_Data_2012_2018, Year=="2014"| Year=="2018"), aes(x=CTD.Temperature.b0C, y=Extracted.Chlorophyll.a.b5g.L, color=as.factor(Year))) +
+  geom_point(color="black") +
+  geom_smooth(method=lm, se=F) +
+  ylim(0, 130) +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)")) +
+  labs(color="Year") +
+  ggtitle("Relationship between Chlorophyll a and Temperature")
+chla_plot2
+
+```
+***Figure #. Line plot showing relationship between chlorophyll a (y axis) and water temperature (x axis) in 2014 (red line) and 2018 (blue line).***
+
+While microcystin concentrations between 2012 and 2018 show a negative trend with temperature overall (Fig. #), there was a significant, positive association between microcystin and temperature in 2014 (Fig. #). As discussed above, microcystin collection was sporadic throughout the study period, and the low sample size may affect our ability to detect relationships between microcystin concentration and water quality variables.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#Plotting linear model results
+#Total dataset: microcystin
+mc_plot <- ggplot(data=Erie_Data_2012_2018, aes(x=CTD.Temperature.b0C, y=Dissolved.Microcystin.b5g.L)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F, color="#009E73") +
+  ylim(0, 2) +
+  #scale_y_continuous(trans='log10') +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Microcystin" ~ "("*mu*"g/L)")) +
+  ggtitle("Relationship between Microcystin and Temperature")
+mc_plot
+
+```
+***Figure #. Line plot showing relationship between microcystin (y axis) and water temperature (x axis) between 2012 and 2018.***
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#2014 and 2018: microcystin
+mc_plot2 <- ggplot(data=filter(Erie_Data_2012_2018, Year=="2014"| Year=="2018"), aes(x=CTD.Temperature.b0C, y=Dissolved.Microcystin.b5g.L, color=as.factor(Year))) +
+  geom_point(color="black") +
+  geom_smooth(method=lm, se=F) +
+  ylim(0, 2) +
+  xlab(expression("Temperature" ~ "("*degree*C*")")) + 
+  ylab(expression("Microcystin" ~ "("*mu*"g/L)")) +
+  labs(color="Year") +
+  ggtitle("Relationship between Microcystin and Temperature")
+mc_plot2
+
+```
+***Figure #. Line plot showing relationship between microcystin (y axis) and water temperature (x axis) in 2014 (red line) and 2018 (blue line).***
+
+In 2018, chlorophyll a was positively associated with nitrate and nitrite concentrations, but microcystin was negatively associated with nitrate and nitrite (Fig. #). This result was unexpected, as we hypothesized that both chlorophyll a and microcystin would respond similarly to water quality variables like nutrient concentration. 
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#Plotting linear model results
+#2018: nitrate and nitrite
+#Chlorophyll a
+chla_2018_plot <- ggplot(data=filter(Erie_Data_2012_2018, Year=="2018"), aes(x=Nitrate..Nitrite.mg.N.L, y=Extracted.Chlorophyll.a.b5g.L)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F, color="#00BFC4") +
+  ylim(0, 100) +
+  xlim(0, 9) +
+  xlab("Nitrate + Nitrite (mg N/L)") + 
+  ylab(expression("Chlorophyll a" ~ "("*mu*"g/L)")) +
+  ggtitle("Relationship between Chlorophyll a and Nitrate + Nitrite")
+chla_2018_plot
+
+#Microcystin
+mc_2018_plot <- ggplot(data=filter(Erie_Data_2012_2018, Year=="2018"), aes(x=Nitrate..Nitrite.mg.N.L, y=Dissolved.Microcystin.b5g.L)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F, color="#00BFC4") +
+  ylim(0, 0.65) +
+  xlim(0, 9) +
+  xlab("Nitrate + Nitrite (mg N/L)") + 
+  ylab(expression("Microcystin" ~ "("*mu*"g/L)")) +
+  ggtitle("Relationship between Microcystin and Nitrate + Nitrite")
+mc_2018_plot
+
+```
+***Figure #. Line plot showing relationship between microcystin (y axis) and nitrate + nitrite concentration (x axis) in 2018.***
+
+
 We further used linear modeling to assess the relationships between chlorophyll a and microcystin and water temperature in 2022.  
 
-\newpage
 
+\newpage
 # Summary and Conclusions
 
 
