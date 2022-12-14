@@ -306,7 +306,7 @@ chla_hist_no_outlier
 ##easier to see distribution of chl a when outlier is removed
 
 ```
-***Figure 1. Chlorophyll a distribution from 2012-2018. Bottom figure excludes 6784 $\mu$g/L$ outlier from August, 2015.***
+***Figure 1. Chlorophyll a distribution from 2012-2018. Bottom figure excludes 6784 $\mu$g/L outlier from August, 2015.***
 
 Similarly, chlorophyll a measurements from 2022 are clustered below 100 µg/L, with few observations between 150 and 272 µg/L (Figure 2).
 
@@ -468,7 +468,7 @@ cols_label(
 ```
 
 \newpage
-To explore the third question, a summary statistics table (Table 3) was generated to show the number of observations, mean, standard deviation, and median within each group of interest (i.e., surface and bottom depth categories). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends for both bottom and surface depth observations
+To explore the third question, a summary statistics table (Table 3) was generated to show the number of observations, mean, standard deviation, median, maximum and minimum values within each group of interest (i.e., surface and bottom depth categories). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends for both bottom and surface depth observations
 
 ***Table 3. Summary Statistics: Harmful algal bloom and water quality characteristics of Lake Erie at bottom and surface depths.***
 ```{r, include = FALSE, message = FALSE, warning = FALSE}
@@ -557,7 +557,9 @@ cols_label(
 ## Question 1: How does Microcystis and microcystin concentration change over time?
 
 Hypotheses:
+
 Ho: Microcystin and chlorophyll a concentrations are not significantly related to month or year
+
 HA: There is a significant difference between microcystin and chlorophyll a concentrations across different months and years
 
 
@@ -773,7 +775,7 @@ ANOVA tests demonstrated that the year 2014 experienced a statistically signific
 
 When running the ANOVA tests on the 2022 dataset alone however, results indicate that both microcystin and chlorophyll a concentrations in  month 8, August, are of significant difference to the other sampled months.
 
- In contrast to what we expected, these results demonstrate little to no significant variation in microcystin or chlorophyll a concentration by month or year between 2012 - 2018and primarily supports our null hypothesis, but results from 2022 indicating a significant difference of concentrations in August as compared to other months supports our alternative hypothesis. This lack of relationship may be due to gaps in data collection, for example, collecting chlorophyll a data for a few days in each month and less often for microcystin. 
+ In contrast to what we expected, these results demonstrate little to no significant variation in microcystin or chlorophyll a concentration by month or year between 2012 - 2018 and primarily supports our null hypothesis, but results from 2022 indicating a significant difference of concentrations in August as compared to other months supports our alternative hypothesis. This lack of relationship may be due to gaps in data collection, for example, collecting chlorophyll a data for a few days in each month and less often for microcystin. 
 
 
 
@@ -784,7 +786,9 @@ When running the ANOVA tests on the 2022 dataset alone however, results indicate
 **Generalized linear modeling**
 
 Hypotheses:
+
 Ho: There is no relationship between chlorophyll a and microcystin and water temperature, nitrate/nitrite, and total dissolved phosphorus concentration (coefficient = 0)
+
 HA: There is a significant relationship between chlorophyll a and microcystin and water temperature, nitrate/nitrite, and total dissolved phosphorus concentration (coefficient $\neq$ 0)
 
 To determine the variables driving chlorophyll a and microcystin concentration in Western Lake Erie, we conducted generalized linear modeling, taking into account temperature, nitrate and nitrite concentration, and total dissolved phosphorus concentration. We analyzed these trends for the entire 2012-2018 dataset, and for the years 2014 and 2018 specifically. 
@@ -1157,7 +1161,7 @@ We hypothesize that microcystin, chlorophyll a, and dissolved oxygen will be gre
 ***Hypotheses for microcystin concentration at surface vs. bottom depth***
 
 
-Ho: Surface depth microcystin concentrations are $\le$<= bottom depth microcystin concentrations 
+Ho: Surface depth microcystin concentrations are $\le$ bottom depth microcystin concentrations 
 
 HA: Surface depth microcystin concentrations are > bottom depth microcystin concentrations 
 
@@ -1176,6 +1180,7 @@ HA: Surface depth dissolved oxygen concentrations are > bottom depth microcystin
 
 
 **Assessing distribution of data**
+
 Before assessing these claims, a Shapiro-Wilk test for normality was conducted for the microcystin, chlorophyll a, and dissolved oxygen data. The test rejected the null hypothesis which states that the data are normally distributed in all cases as shown in Table 6. Thus, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers for each variable. These results can be found in Table 7.
 
 ```{r, include=FALSE}
