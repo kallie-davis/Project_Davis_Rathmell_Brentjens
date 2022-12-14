@@ -1331,7 +1331,7 @@ DO_SB_plot <- ggplot(bottom_surface_Erie_dropNA_DO)+
 print(DO_SB_plot)
 ```
 
-***Figure 15. Dissolved oxygen concentrations at surface and bottom depth for years 2015 through 2018.***
+***Figure 16. Dissolved oxygen concentrations at surface and bottom depth for years 2015 through 2018.***
 
 
 \newpage
