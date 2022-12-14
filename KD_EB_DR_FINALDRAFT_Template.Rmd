@@ -1260,7 +1260,7 @@ wilcox_DO
 ```
 
 ```{r, include=FALSE}
-#Wilcoxin Rank Sum test table formatting
+#Wilcoxon Rank Sum test table formatting
 wilcox.1 <- rbind(wilcox_microcystin, wilcox_chla, wilcox_DO)
 wilcox<- as.data.frame(wilcox.1)
 
@@ -1287,11 +1287,11 @@ wilcox_reorder <- wilcox.10_round[, c(3, 1, 2)]
 
 ```
 
-***Table 7. Wilcoxin Rank Sum Test for bottom versus surface depths.***
+***Table 7. Wilcoxon Rank Sum Test for bottom versus surface depths.***
 ```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
 gt(wilcox_reorder) %>% 
   tab_header(
-    title = "Wilcoxin Rank Sum Test Results") %>%
+    title = "Wilcoxon Rank Sum Test Results") %>%
   sub_small_vals()
 
 ```
