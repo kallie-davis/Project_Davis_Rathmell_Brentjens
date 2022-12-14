@@ -7,6 +7,8 @@ editor_options:
   chunk_output_type: console
 ---
 ```{r}
+
+#:( the time series analysis has been abandoned :(
 getwd()
 library(tidyverse)
 #install.packages(zoo)

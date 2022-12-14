@@ -51,6 +51,8 @@ install.packages("pixiedust")
 library(pixiedust)
 #install.packages("broom")
 library(broom)
+install.packages('agricolae')
+library(agricolae)
 
 # Set your ggplot theme
 ggplot_theme <- theme_linedraw(base_size = 12) +
@@ -121,7 +123,7 @@ Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>%
 ```
 
 ```{r, include=FALSE}
-#write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_2_processed.csv")
+write.csv(Erie_Data_2012_2018, "./Data/Processed/Erie_2012_2018_2_processed.csv")
 ```
 
 
@@ -815,7 +817,74 @@ It was difficult to visualize annual and monthly trends in microcystin, nitrate 
 
 To assess whether differences in chlorophyll a and temperature between months and years were statistically significant, we conducted two-way ANOVA tests.
 
-[ANOVAs here]
+The null hypothesis for Question 1 is that concentrations of microcystin and chlorophyll are not significantly different and have no significant relationship between the various months and years in which the GLERL sampled them. Our alternative hypothesis is that there is a substantial difference between microcystin concentrations each month and each year. 
+
+The initial plan was to conduct a time series analysis of the data to answer question 2, how microcystin concentrations change over time. This time series analysis would visualize microcystin and chlorophyll concentrations over month and year periods. However, after attempts to conduct a time series analysis and a closer look at the data, the gaps between data collection and other outliers were too extensive, making the visualization of time series data inaccurate and confusing. 
+
+To assess whether differences in chlorophyll a and temperature between months and years were statistically significant, we conducted two-way ANOVA tests. ANOVA, a different statistical analysis used to determine the variability between multiple factors, was implemented to evaluate the statistical significance of differing microcystin and chlorophyll concentrations over the years. After assessing the ANOVA for microcystin and chlorophyll concentrations over the various studied months, years, and temperatures, we applied a Tukey HSD test to the results if the ANOVA P value was statistically significant. 
+
+
+```{r, include=FALSE}
+
+Erie.Anova.analysis <- Erie_Data_2012_2018
+Erie.Anova.analysis$Date <- as.Date(Erie.Anova.analysis$Date, format = '%m/%d/%Y')
+#class(Erie.Anova.analysis$Date)
+# colnames(Erie_Data_2012_2018)
+Erie.Anova.analysis <-
+  Erie.Anova.analysis %>% 
+  mutate(Month = month(Date))%>%
+  mutate(Year = year(Date))
+colnames(Erie.Anova.analysis)
+Erie.Anova.analysis <-
+  Erie.Anova.analysis %>% 
+  select('Date','Extracted.Chlorophyll.a.b5g.L','Dissolved.Microcystin.b5g.L','CTD.Temperature.b0C','Year', 'Month')
+#creating a dataset of just the parameters we are evaluating in the ANOVA tests
+
+#microcystin anova
+
+#monthly microcystin
+micro_month_anova <- aov(data = Erie.Anova.analysis, Dissolved.Microcystin.b5g.L ~ Month)
+summary(micro_month_anova)
+#P value is greater than .05, a Tukey HSD test is not necessary since difference between months is not of statistical significance.
+
+#yearly microcystin
+micro_year_anova <- aov(data=Erie.Anova.analysis, Dissolved.Microcystin.b5g.L ~ as.factor(Year))
+summary(micro_year_anova)
+TukeyHSD(micro_year_anova, conf.level=.95)
+
+#because the P value of the anova test is less than .05 we ran a Tukey HSD test to determine which values differences were statistically significant. The results indicate that the microcystin concentrations from 2014 are statistically significantly different from every other year and that the difference between 2016 and 2018 is significant.
+
+colnames(Erie.Anova.analysis)
+#microcystin and temperature
+micro_temp_anova <- aov(data=Erie.Anova.analysis, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C)
+summary(micro_temp_anova)
+#tukey?
+
+#Chlorophyll Anova
+
+colnames(Erie.Anova.analysis)
+
+#chlorophyll monthly anova
+
+chloro_month_anova <- aov(data = Erie.Anova.analysis, Extracted.Chlorophyll.a.b5g.L ~ as.factor(Month))
+summary(micro_month_anova)
+#P value is greater than .05 indicating that chlorophyll differences in concentrations each month are not statistically significant.
+
+#chlorophyll yearly anova
+chloro_year_anova <- aov (data=Erie.Anova.analysis, Extracted.Chlorophyll.a.b5g.L ~ as.factor(Year))
+summary(chloro_year_anova)
+#P value is greater than .05 indicating that chlorophyll differences in concentrations each year are not statistically significant.
+
+
+#chlorophyll temperature anova
+chloro_anova_temp <- aov(data=Erie_timeseries_month, Extracted.Chlorophyll.a.b5g.L~ CTD.Temperature.b0C)
+summary(chloro_anova_temp)
+#P value is greater than .05 indicating that chlorophyll differences in concentrations for individual temperatures are not statistically significant.
+
+
+```
+
+The ANOVA results differed from the alternative hypothesis, saying that the differences in microcystin and chlorophyll concentrations were not statistically significant except on a few occasions. The only model that demonstrated statistical significance was the ANOVA, which evaluated microcystin concentrations by year. That model found that 2014 microcystin concentrations were significantly different in 2014 and then between 2016 and 2018. These results primarily support our null hypothesis for this question, that there is no significant difference or relationship between microcystin concentrations throughout the years and months.
 
 \newpage
 **Generalized linear modeling**
