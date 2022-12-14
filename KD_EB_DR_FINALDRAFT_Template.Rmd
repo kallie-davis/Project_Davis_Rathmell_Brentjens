@@ -1,5 +1,5 @@
 ---
-title: "An Analysis of the Drivers of Harmful Algal Blooms in Lake Erie"
+title: "An Analysis of the Drivers of Harmful Algal Blooms in Western Lake Erie"
 author: "Kallie Davis, Dori Rathmell, and Emma Brentjens"
 output:
   pdf_document: default
@@ -13,17 +13,17 @@ output:
 \listoftables 
 Table 1. Variables of interest and associated units.
 
-Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018.
+Table 2. Summary Statistics: Harmful algal bloom and water quality Characteristics of Lake Erie 2012 through 2018.
 
-Table 3. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths.
+Table 3. Summary Statistics: Harmful algal bloom and water quality characteristics of Lake Erie at bottom and surface Depths.
 
 Table 4. Linear model results of relationships between response variables: chlorophyll a and microcystin, and explanatory variables: temperature, nitrate and nitrite, and total dissolved phosphorus concentration.
 
 Table 5. Linear model results of relationships between response variables: chlorophyll a and microcystin, and temperature in 2022. 
 
-Table 6. Shapiro-Wilk Test for Normality Results 
+Table 6. Shapiro-Wilk Test for normality results 
 
-Table 7. Wilcoxin Rank Sum Test for Bottom versus Surface Depths. 
+Table 7. Wilcoxin Rank Sum Test for bottom versus surface depths. 
 
 \newpage
 \listoffigures 
@@ -53,11 +53,11 @@ Figure 12. Line plot showing relationship between microcystin (y axis) and water
 
 Figure 13. Line plots showing relationship between chlorophyll a (top) and microcystin (bottom; y axis) and nitrate + nitrite concentration (x axis) in 2018. 
 
-Figure 14. Microcystin Concentrations at Surface and Bottom Depth for years 2015 through 2018.
+Figure 14. Microcystin concentrations at surface and bottom depth for years 2015 through 2018.
 
-Figure 15. Chlorophyll a Concentrations at Surface and Bottom Depth for years 2015 through 2018. 
+Figure 15. Chlorophyll a concentrations at surface and bottom depth for years 2015 through 2018. 
 
-Figure 16. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018.
+Figure 16. Dissolved oxygen concentrations at surface and bottom depth for years 2015 through 2018.
 
 
 \newpage
@@ -219,7 +219,7 @@ Lake Erie has been affected by seasonal HABs since the 1990s (NSF, 2019). Lake E
 Algae and toxin production has public health implications for surrounding populations as exposure can occur through recreation and consumption of contaminated drinking water (Dierkes, 2014; U.S. EPA, 2022b). Algal blooms can also create anoxic conditions when algae undergo decomposition in the environment, which also influences ecosystem health (CDC, 2022). Due to the historical and current public health and ecosystem prevalence, data collection efforts have been implemented within Lake Erie to aid with forecasting future bloom severity. These data in the western basin are evaluated in this report.
 
 
-Lake Erie is the shallowest of the great lakes with an average depth of 19m; the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie undergoes stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). Microcystis is the most common species and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie (GLERL, 2019). 
+Lake Erie is the shallowest of the great lakes with an average depth of 19m; the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie undergoes stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). *Microcystis* is the most common genus and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie (GLERL, 2019). 
 
 Considering the characteristics of Western Lake Erie, we seek to examine the drivers of harmful algal blooms in the lake. This report evaluates the following questions:
 
@@ -240,7 +240,7 @@ The National Oceanic and Atmospheric Administration Great Lakes Environmental Re
 
 The NOAA GLERL studies the movement, size, and concentration of toxins and nutrients typically associated with HABs, such as microcystin, nitrogen, phycocyanin, and chlorophyll a. They also measure other factors that impact HABs, such as temperature and dissolved oxygen (DO) concentrations. The lab’s primary goal is to characterize the growth and abundance of microcystin concentrations and how their presence affects the toxicity of the lake. 
 
-The data from Western Lake Erie comes from nine sites sampled weekly, four of which have buoys collecting data continuously at 15-minute intervals. Only some sampled areas gather data on the same parameters, resulting in occasional missing data. GLERL also collected two different measurements of temperature for samples, CTD.Temperature.b0c, and the Sample.Temperature.b0c. Because the CTD.Temperature.b0c data had fewer instances of missing data we primarily used that data when analyzing how temperature affects microcystin abundance and concentrations.
+The data from Western Lake Erie comes from nine sites sampled weekly, four of which have buoys collecting data continuously at 15-minute intervals. Only some sampled areas gather data on the same parameters, resulting in occasional missing data. GLERL also collected two different measurements of temperature for samples, CTD.Temperature.b0c, and the Sample.Temperature.b0c. Because the CTD.Temperature.b0c data had fewer instances of missing data we used that data when analyzing how temperature affects microcystin abundance and concentrations.
 
 The sourced data set contains information on parameters ranging from 2012 to 2018 and a final data set that monitors the toxin and nutrient concentration from 2022. The variables we will analyze are displayed below in Table 1 with their units of measurement.
 
@@ -280,7 +280,7 @@ cols_align(
 \newpage
 # Data Wrangling
 
-To analyze the data, we needed to change the format of some variables, select certain columns, and add columns. For the 2012-2018 dataset, we used the gsub() function to remove all special characters, replacing spaces and slashes with periods and deleting parentheses and other characters that interfered with R reading the data. We then created a subset of the data using the data_frame() function to only include some columns from the original dataset. Character columns were converted to numeric as necessary. The “Date” column was converted to a date object and a “Year” column was added using the year() function from the Lubridate package. We used filter() to remove all observations of “Scum” (mats of algae that float on the water) to include only samples from the water body. To analyze surface and bottom samples separately, the data were further filtered for those sample depth categories, and for the years 2015-2018 as bottom sample data were not recorded for the previous three years. 
+To analyze the data, we needed to change the format of some variables, select certain columns, and add columns. For the 2012-2018 dataset, we used the gsub() function to remove all special characters, replacing spaces and slashes with periods and deleting parentheses and other characters that interfered with R reading the data. We then created a subset of the data using the data_frame() function to only include some columns from the original dataset. Character columns were converted to numeric as necessary. We used filter() to remove all observations of “Scum” (mats of algae that float on the water) to include only samples from the water body. The “Date” column was later converted to a date object and a “Year” column was added using the year() function from the Lubridate package. To analyze surface and bottom samples separately, the data were further filtered for those sample depth categories, and for the years 2015-2018 as bottom sample data were not recorded for the previous three years. 
 
 We followed similar steps to process the 2022 dataset, converting character columns to numeric, creating a subset with variables of interest, removing “Scum” observations, and later converting the “Date” column to a date object and adding “Month” and “Year” columns. 
 
@@ -310,6 +310,7 @@ chla_hist_no_outlier
 ```
 ***Figure 1. Chlorophyll a distribution from 2012-2018. Bottom figure excludes 6784 $\mu$g/L outlier from August, 2015.***
 
+\newpage
 Similarly, chlorophyll a measurements from 2022 are clustered below 100 µg/L, with few observations between 150 and 272 µg/L (Figure 2).
 
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
@@ -323,6 +324,7 @@ chla_hist_2022
 ```
 ***Figure 2. Chlorophyll a distribution in 2022.***
 
+\newpage
 Temperature measurements in both the 2012-2018 and 2022 datasets predominantly fall between 20 and 25 degrees Celsius (Figure 3).
 
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
@@ -343,6 +345,7 @@ temp_hist_2022
 ```
 ***Figure 3. Temperature distribution from 2012-2018 (top) and in 2022 (bottom).***
 
+\newpage
 Dissolved microcystin concentrations between 2012 and 2018 were strongly right-skewed, with the majority of observations falling below 0.25 µg/L and very few between 1.3 and 2 µg/L. Microcystin measurements in 2022 are mainly below 0.5 µg/L and exhibit a narrower range of values (Figure 4).
 
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
@@ -363,6 +366,7 @@ mc_hist_2022
 ```
 ***Figure 4. Microcystin distribution from 2012-2018 (top) and in 2022 (bottom).***
 
+\newpage
 Dissolved oxygen measurements from 2012-2018 are concentrated around 8 mg/L, while 2022 seems to have overall lower dissolved oxygen values, mainly concentrated between 7 and 8 mg/L (Figure 5). 
 
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
@@ -383,7 +387,7 @@ do_hist_2022
 ```
 ***Figure 5. Dissolved oxygen distribution from 2012-2018 (top) and in 2022 (bottom).***
 
-
+\newpage
 To begin exploration of the questions, a summary statistics table (Table 2) was generated to show the number of observations, mean, standard deviation, median, maximum, and minimum values within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occurring within given years.
 
 
@@ -557,7 +561,7 @@ cols_label(
 
 
 
-## Question 1: How does Microcystis and microcystin concentration change over time?
+## Question 1: How do chlorophyll a and microcystin concentration change over time?
 
 Hypotheses:
 
@@ -623,6 +627,7 @@ chla_plot
 ```
 ***Figure 6. Chlorophyll a concentrations from 2012-2018 averaged across sites and sampling depth for each day.***
 
+\newpage
 Temperature, by contrast, appears to have remained relatively constant between 2012 and 2018 (Figure 7).
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -639,7 +644,7 @@ temp_plot
 ```
 ***Figure 7. Water temperature from 2012-2018 averaged across sites and sampling depth for each day.***
 
-
+\newpage
 We averaged chlorophyll a by month for each year to examine monthly trends. The monthly trends in chlorophyll a were similar across 2014, 2018, and 2022, with chlorophyll a peaking in August. This peak was more prominent in 2022 than in 2014 and 2018 (Figure 8). 
 
 ```{r, include=FALSE}
@@ -698,7 +703,7 @@ chla_plot_monthly
 ```
 ***Figure 8. Monthly trends in chlorophyll a in 2014, 2018, and 2022.***
 
-Since data collection is sporadic throughout the seven years, it was challenging to visualize annual microcystin concentrations. The initial plan was to conduct a time series analysis of the data to assess temporal trends in microcystin and chlorophyll a . However, after attempts to conduct a time series analysis and a closer look at the data, the gaps between data collection was too extensive, making the visualization of time series data inaccurate and confusing.
+Since data collection is sporadic throughout the seven years, it was challenging to visualize annual microcystin concentrations. The initial plan was to conduct a time series analysis of the data to assess temporal trends in microcystin and chlorophyll a. However, after attempts to conduct a time series analysis and a closer look at the data, the gaps between data collection was too extensive, making the visualization of time series data inaccurate and confusing.
 
 We instead conducted two-way ANOVA tests to assess whether differences in chlorophyll a and microcystin between months and years were statistically significant. We then applied a Tukey HSD test to the ANOVA results to determine which years were statistically different.
 
@@ -778,13 +783,13 @@ ANOVA tests demonstrated that the year 2014 experienced a statistically signific
 
 When running the ANOVA tests on the 2022 dataset alone however, results indicate that both microcystin and chlorophyll a concentrations in  month 8, August, are of significant difference to the other sampled months.
 
- In contrast to what we expected, these results demonstrate little to no significant variation in microcystin or chlorophyll a concentration by month or year between 2012 - 2018 and primarily supports our null hypothesis, but results from 2022 indicating a significant difference of concentrations in August as compared to other months supports our alternative hypothesis. This lack of relationship may be due to gaps in data collection, for example, collecting chlorophyll a data for a few days in each month and less often for microcystin. 
+In contrast to what we expected, these results demonstrate little to no significant variation in microcystin or chlorophyll a concentration by month or year between 2012 - 2018 and primarily supports our null hypothesis, but results from 2022 indicating a significant difference of concentrations in August as compared to other months support our alternative hypothesis. This lack of relationship may be due to gaps in data collection, for example, collecting chlorophyll a data for a few days in each month and less often for microcystin. 
 
 
 
 \newpage
 
-## Question 2: Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
+## Question 2: Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, *Microcystis* population growth, and dissolved oxygen?
 
 **Generalized linear modeling**
 
@@ -1016,6 +1021,7 @@ chla_plot2
 ```
 ***Figure 10. Line plot showing relationship between chlorophyll a (y axis) and water temperature (x axis) in 2014 (red line) and 2018 (blue line).***
 
+\newpage
 While microcystin concentrations between 2012 and 2018 show a negative trend with temperature overall (Figure 11), there was a significant, positive association between microcystin and temperature in 2014 (Figure 12). As discussed above, microcystin collection was sporadic throughout the study period, and the low sample size may affect our ability to detect relationships between microcystin concentration and water quality variables.
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -1049,6 +1055,7 @@ mc_plot2
 ```
 ***Figure 12. Line plot showing relationship between microcystin (y axis) and water temperature (x axis) in 2014 (red line) and 2018 (blue line).***
 
+\newpage
 In 2018, chlorophyll a was positively associated with nitrate and nitrite concentrations, but microcystin was negatively associated with nitrate and nitrite (Figure 13). This result was unexpected, as we hypothesized that both chlorophyll a and microcystin would respond similarly to water quality variables like nutrient concentration. 
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -1156,7 +1163,7 @@ cols_label(
 ```
 
 
-
+\newpage
 ## Question 3: Are there differences between microcystin, chlorophyll a, or dissolved oxygen concentration at different lake depths?
 
 We hypothesize that microcystin, chlorophyll a, and dissolved oxygen will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below: 
@@ -1341,11 +1348,11 @@ print(DO_SB_plot)
 Question 1: How do chlorophyll a and microcystin concentration change over time?  
 Our initial hypothesis suggested that there would be a significant difference and relationship in chlorophyll a and microcystin concentrations over the sampled months and years. 
 
-The ANOVA and Tukey HSD tests demonstrated that, for the most part, there was not a statistically significant difference or relationship between the microcystin and chlorophyll a concentrations throughout the studied years. However, the tests observed that 2014 was statistically significantly different from future years and that the differences between 2016 and 2018 were statistically significant. These findings support the initial null hypothesis that there is no substantial relationship between the toxin concentrations over the years. However, more research is needed to determine the validity of the statistically significant relationship between 2016 and 2018, and 2014. 
+The ANOVA and Tukey HSD tests demonstrated that, for the most part, there was not a statistically significant difference or relationship between the microcystin and chlorophyll a concentrations throughout the studied years. However, the tests observed that 2014 was statistically significantly different from following years and that the differences between 2016 and 2018 were statistically significant. Overall, we found no consistent relationship between the toxin concentrations over the years. However, more research is needed to determine the validity of the statistically significant relationship between 2016 and 2018, and 2014. 
 
-When looking at the months, the ANOVA and Tukey HSD tests showed that for the first dataset (2012-2018), there was not a statistically significant relationship between the sampled months, supporting our null hypothesis that there is not a significant difference over time. However, when running ANOVA and Tukey HSD tests on the 2022 dataset, we found that month 8, August, was consistently significantly different from other months regarding the chlorophyll a and microcystin concentrations. This finding supports our alternative hypothesis, but more research over an extended period is needed to confirm a statistically significant relationship.
+When looking at the months, the ANOVA and Tukey HSD tests showed that for the first dataset (2012-2018), there was not a statistically significant relationship between the sampled months, supporting the null hypothesis that there is not a significant difference over time. However, when running ANOVA and Tukey HSD tests on the 2022 dataset, we found that August was consistently significantly different from other months regarding the chlorophyll a and microcystin concentrations. This finding supports our alternative hypothesis, but more research over an extended period is needed to confirm a statistically significant relationship.
 
-Question 2: Which variables (i.e., temperature, nitrate/nitrite, and/or total dissolved phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
+Question 2: Which variables (i.e., temperature, nitrate/nitrite, and/or total dissolved phosphorus) contribute to microcystin production, *Microcystis* population growth, and dissolved oxygen?
 
 After running linear models, we found that the relationship between our response variables (microcystin and chlorophyll a) and our explanatory variables was inconsistent. Observed microcystin concentrations between 2012 and 2018 were overall negatively associated with temperature but positively associated with temperatures in 2014. Additionally, Chlorophyll a was positively associated with temperature and nitrate/nitrite in 2018 but not in 2014 or across the whole dataset. These findings contrast our expectation and the alternative hypothesis that microcystin and chlorophyll a concentrations would increase with temperature and higher nutrient concentrations.
 
@@ -1353,7 +1360,7 @@ These results indicate that these relationships may change year to year and depe
 
 Question 3: Are there differences between toxin and algae concentrations at different lake depths? 
 
-We hypothesized that there will be increased chlorophyll a, microcystin, and dissolved oxygen concentrations in the surface layer of lake Erie. The Wilcoxon Rank Sum test supported this claim for chlorophyll a and dissolved oxygen variables; this claim was not supported for the microcystin variable. Algae, as photosynthetic organisms, reside near the surface of a water column but as they die they tend to sink to the bottom. Since microcystin is released upon cell death, it is possible that this sinking process is what is responsible for the lack of established trends in microcystin distribution between surface and bottom layers. The Western Basin of Lake Erie is the shallowest region of the lake which may explain why these trends are subtle. In future investigations, studying the deeper lake basins is of interest regarding the effects of stratification and these variables. 
+We hypothesized that there will be increased chlorophyll a, microcystin, and dissolved oxygen concentrations in the surface layer of Lake Erie. The Wilcoxon Rank Sum test supported this claim for chlorophyll a and dissolved oxygen variables; this claim was not supported for the microcystin variable. Algae, as photosynthetic organisms, reside near the surface of a water column but as they die they tend to sink to the bottom. Since microcystin is released upon cell death, it is possible that this sinking process is what is responsible for the lack of established trends in microcystin distribution between surface and bottom layers. The Western Basin of Lake Erie is the shallowest region of the lake which may explain why these trends are subtle. In future investigations, studying the deeper lake basins is of interest regarding the effects of stratification and these variables. 
 
 \newpage
 
