@@ -36,7 +36,7 @@ Figure 5. Dissolved oxygen distribution from 2012-2018 (top) and in 2022 (bottom
 
 Figure 6.  Chlorophyll a concentrations from 2012-2018. 
 
-Figure 7.  Water temperature from 2012-2018. → needs title
+Figure 7.  Water temperature from 2012-2018.
 
 Figure 8.  Monthly trends in chlorophyll a in 2014, 2018, and 2022.
 
