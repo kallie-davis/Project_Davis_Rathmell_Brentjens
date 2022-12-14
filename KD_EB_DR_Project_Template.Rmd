@@ -112,7 +112,7 @@ Erie_Data_2012_2018$Soluble.Reactive.Phosphorus.b5g.P.L <- as.numeric(Erie_Data_
 Erie_Data_2012_2018$Ammonia.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Ammonia.b5g.N.L)
 Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L <- as.numeric(Erie_Data_2012_2018$Nitrate..Nitrite.mg.N.L)
 Erie_Data_2012_2018$Urea.b5g.N.L <- as.numeric(Erie_Data_2012_2018$Urea.b5g.N.L)
-Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y") ##maybe take out date because I end up having to convert the date later anyways?
+Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y")
 
 #remove scum
 Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>%

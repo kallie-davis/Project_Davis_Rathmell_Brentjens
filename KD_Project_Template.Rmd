@@ -7,23 +7,8 @@ output:
 \tableofcontents 
 \newpage
 \listoftables 
-Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018
-
-Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths
-
-Table ###. Shapiro-Wilk Test for Normality Results
-
-Table ###. Wilcoxin Rank Sum Test for Bottom versus Surface Depths
-
 \newpage
 \listoffigures 
-
-Figure ###. Microcystin Concentrations at Surface and Bottom Depth for years 2015 through 2018
-
-Figure ###. Chlorophyll a Concentrations at Surface and Bottom Depth for years 2015 through 2018
-
-Figure ###. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018
-
 \newpage
 
 ```{r setup, include=FALSE}
@@ -43,8 +28,6 @@ library(ggplot2)
 library(Kendall) 
 #install.packages("gt")
 library(gt)
-#install.packages("pixiedust")
-library(pixiedust)
 
 # Set your ggplot theme
 ggplot_theme <- theme_linedraw(base_size = 12) +
@@ -112,26 +95,32 @@ Erie_Data_2012_2018$Date <- as.Date(Erie_Data_2012_2018$Date, format = "%m/%d/%Y
 #remove scum
 Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>%
   filter(!Sample.Depth.category=="Scum")
-
-#Add a year column
-Erie_Data_2012_2018 <- Erie_Data_2012_2018 %>% 
-  mutate(Year = format(Date, "%Y"))
 ```
 
-```{r, include=FALSE}
+```{r}
 #write.csv(Erie_Data_2012_2018_2, "./Data/Processed/Erie_2012_2018_2_processed.csv")
 ```
 
 
 ```{r, include=FALSE}
-#Filter for surface and bottom variables
+#GLMs with surface and bottom variables
 bottom_surface_Erie <- Erie_Data_2012_2018 %>% 
   filter(Sample.Depth.category == "Bottom" | Sample.Depth.category == "Surface")
 
-#filter for years 2015 through 2018; no bottom observations are collected before 2015
-bottom_surface_Erie <- bottom_surface_Erie %>% 
-  filter(Year == "2015" | Year == "2016" | Year == "2017" | Year == "2018")
+#Microcystin.model_SB <- lm(data = bottom_surface_Erie, Dissolved.Microcystin.b5g.L ~ 
+#                        Sample.Depth.category)
 
+#summary(Microcystin.model_SB) #there is a significant relationship between bottom and surface depths, but not enough data in the bottom section to be added as a dummy variable in MLR. I will break out to models into Surface and remove other observations. 
+
+#Erie_Surface_2012_2018 <- Erie_Data_2012_2018 %>% 
+#  filter(Sample.Depth.category == "Surface")
+
+#Surface Microcystin model (explanatory variables include temperature, phosphorus, and nitrogen)
+#Microcystin.model_Surface <- lm(data = Erie_Surface_2012_2018, Dissolved.Microcystin.b5g.L ~ CTD.Temperature.b0C+ Total.Dissolved.Phosphorus.b5g.P.L+Nitrate..Nitrite.mg.N.L)
+
+#summary(Microcystin.model_Surface)
+
+unique(bottom_surface_Erie$Sample.Depth.category)
 ```
 
 # Rationale and Research Questions
@@ -162,7 +151,7 @@ The NOAA GLERL studies the movement, size, and concentration of toxins and nutri
 
 The data from Western Lake Erie comes from nine sites sampled weekly, four of which have buoys collecting data continuously at 15-minute intervals. Only some sampled areas gather data on the same parameters, resulting in occasional missing data. 
 
-The sourced data set contains information on parameters ranging from 2012 - 2018 and a final data set that monitors the toxin and nutrient concentration from 2022.
+The sourced data set contains information on parameters ranging from 2012 - 2018 and a final data set that monitors the toxin and nutrient concentration from 2022. 
 
 
 
@@ -173,89 +162,7 @@ The sourced data set contains information on parameters ranging from 2012 - 2018
 
 # Exploratory Analysis 
 
-To begin exploration of the questions, a summary statistics table (Table 1) was generated to show the number of observations, mean, standard deviation, and median within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature. This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occuring within given years. 
-
-***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 2018***
-
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-
-# Select Variables of Interest
-Erie.select<-Erie_Data_2012_2018%>%
- dplyr::select(Year, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
-head(Erie.select)
-
-```
-
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-
-Erie.select.longer<-pivot_longer(Erie.select, !Year, names_to = "Variable", values_to = "value")
-
-summary.Erie<-Erie.select.longer%>%
-  dplyr::group_by(Year, Variable) %>%
-  dplyr::summarize(
-    Obs=length(value)-sum(is.na(value)),
-    Mean=mean(value, na.rm=TRUE),
-    SD=sd(value, na.rm=TRUE),
-    Median=median(value, na.rm=TRUE))
-   
-head(summary.Erie)
-
-#remove columns which have NAs
-summary.Erie_dropNAs <- summary.Erie %>% 
-  drop_na()
-  
-```
-
-```{r, include = FALSE, message = FALSE, warning = FALSE}
-#recode
-summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
-                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
-                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
-                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
-                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
-                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
-                                         CTD.Temperature.b0C= "Temperature (deg C)")
-```
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-#Create Table
-
-summary.Erie_dropNAs %>%
-gt() %>%
- 
-
-
-  cols_width(
-    c(Variable)~ px(120),
-    c(Obs)~ px(120),
-    everything() ~ px(90))%>%
-
-  
-  
-  tab_header(
-    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics in 2012 through 2018")) %>%
-  
- 
-  fmt_passthrough (columns=c(Variable)) %>%
-  fmt_number(columns = c(Obs), decimals = 0) %>%
-  fmt_number(columns = c(Median), decimals = 2) %>%
-  fmt_number(columns = c(Mean), decimals = 2) %>%
-  fmt_number(columns = c(SD), decimals = 2) %>%
-  
-
-cols_label(
-    Variable = "",
-    Obs = "Oberservations",
-    Median = "Median",
-    Mean = "Mean",
-    SD = "Standard Deviation")
-  
-
-```
-
-To explore the third question, a summary statistics table (Table 2) was generated to show the number of observations, mean, standard deviation, and median within each group of interest (i.e., surface and bottom depth categories). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends for both bottom and surface depth observations. 
-
-***Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths***
+***Table 1. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie at Bottom and Surface Depths***
 ```{r, include = FALSE, message = FALSE, warning = FALSE}
 # Select Variables of Interest
 
@@ -332,6 +239,86 @@ cols_label(
 
 ```
 
+***Table 2. Summary Statistics: Harmful Algal Bloom and Lake Characteristics of Lake Erie 2012 through 20187***
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#Add a year column
+Erie_Data_2012_2018 <- Erie_Surface_2012_2018 %>% 
+  mutate(Year = format(Date, "%Y"))
+
+# Select Variables of Interest
+Erie.select<-Erie_Data_2012_2018%>%
+ dplyr::select(Year, Dissolved.Microcystin.b5g.L, Extracted.Chlorophyll.a.b5g.L, CTD.Dissolved.Oxygen.mg.L, Nitrate..Nitrite.mg.N.L, Total.Dissolved.Phosphorus.b5g.P.L, CTD.Temperature.b0C)
+head(Erie.select)
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+Erie.select.longer<-pivot_longer(Erie.select, !Year, names_to = "Variable", values_to = "value")
+
+summary.Erie<-Erie.select.longer%>%
+  dplyr::group_by(Year, Variable) %>%
+  dplyr::summarize(
+    Obs=length(value)-sum(is.na(value)),
+    Mean=mean(value, na.rm=TRUE),
+    SD=sd(value, na.rm=TRUE),
+    Median=median(value, na.rm=TRUE))
+   
+head(summary.Erie)
+
+#remove columns which have NAs
+summary.Erie_dropNAs <- summary.Erie %>% 
+  drop_na()
+  
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+#recode
+summary.Erie_dropNAs$Variable <- dplyr:: recode(summary.Erie_dropNAs$Variable, 
+                                         Dissolved.Microcystin.b5g.L = "Dissolved Microcystin (ug/L)",
+                                         Extracted.Chlorophyll.a.b5g.L="Chlorophyll a (ug/L)",
+                                         CTD.Dissolved.Oxygen.mg.L="Dissolved Oxygen (mg/L)",
+                                         Nitrate..Nitrite.mg.N.L="Nitrate/Nitrite Concentration (mg/L)",
+                                         Total.Dissolved.Phosphorus.b5g.P.L="Dissolved Phosphorus (ug/L",
+                                         CTD.Temperature.b0C= "Temperature (deg C)")
+```
+
+```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
+#Create Table
+
+summary.Erie_dropNAs %>%
+gt() %>%
+ 
+
+
+  cols_width(
+    c(Variable)~ px(120),
+    c(Obs)~ px(120),
+    everything() ~ px(90))%>%
+
+  
+  
+  tab_header(
+    title = md("Summary Statistics: Lake Erie Harmful Algal Bloom Characteristics in 2012 through 2018")) %>%
+  
+ 
+  fmt_passthrough (columns=c(Variable)) %>%
+  fmt_number(columns = c(Obs), decimals = 0) %>%
+  fmt_number(columns = c(Median), decimals = 2) %>%
+  fmt_number(columns = c(Mean), decimals = 2) %>%
+  fmt_number(columns = c(SD), decimals = 2) %>%
+  
+
+cols_label(
+    Variable = "",
+    Obs = "Oberservations",
+    Median = "Median",
+    Mean = "Mean",
+    SD = "Standard Deviation")
+  
+
+```
 
 \newpage
 
@@ -345,7 +332,7 @@ cols_label(
 
 ## Question 3: Are there differences between toxin and algae concentrations at different lake depths?
 
-Regarding the third question it is hypothesized that both microcystin, chlorophyll a, and dissolved oxygen concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
+Regarding the third question it is hypothesized that both microcystin and chlorophyll a concentrations will be greater at surface depths opposed to bottom depths in Lake Erie. These hypotheses are stated below:
 
 ***Hypotheses for microcystin concentration at surface vs. bottom depth***
 
@@ -359,58 +346,17 @@ Ho: Surface depth Chlorophyll a concentrations are <= bottom depth microcystin c
 
 HA: Surface depth Chlorophyll a concentrations are > bottom depth microcystin concentrations
 
-***Hypotheses for dissolved oxygen concentration at surface vs. bottom depth***
+Before assessing these claims, a Shapiro-Wilk test for normality was conducted. The test rejected the null hypothesis which states that the data are normally distributed (W = 0.606, p-value = 2.2e-16). In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers. This test, rejected the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 33075, p-value = 0.0339). The test also rejected that null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 152684, p-value = 3.783e-05). A rejection of the null hypothesis which states that dissolved oxygen concentrations at surface depth are less than or equal to dissolved oxygen concentrations at bottom depth (W = 68352, p-value < 2.2e-16) All tests yielded p-values where were below 0.05. 
 
-Ho: Surface depth dissolved oxygen concentrations are <= bottom depth microcystin concentrations
-
-HA: Surface depth dissolved oxygen concentrations are > bottom depth microcystin concentrations
-
-Before assessing these claims, a Shapiro-Wilk test for normality was conducted for the microcystin, chlorophyll a, and dissolved oxygen data. The test rejected the null hypothesis which states that the data are normally distributed in all cases as shown in Table ###. In result, the Wilcoxon Rank Sum test was employed to evaluate the means between surface and bottom layers for each variable. These results can be found in Table ###. 
-
-```{r, include=FALSE}
+```{r, include = FALSE}
 #test for normality of data
-shapiro.microcystin <- shapiro.test(bottom_surface_Erie$Dissolved.Microcystin.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
+shapiro.test(bottom_surface_Erie$Dissolved.Microcystin.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
 
-shapiro.Chla <- shapiro.test(bottom_surface_Erie$Extracted.Chlorophyll.a.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
+shapiro.test(bottom_surface_Erie$Extracted.Chlorophyll.a.b5g.L) #the data is not shown to be normal; reject the null hypothesis of normality in this case
 
-shapiro.DO <- shapiro.test(bottom_surface_Erie$CTD.Dissolved.Oxygen.mg.L)#the data is not shown to be normal; reject the null hypothesis of normality in this case
+shapiro.test(bottom_surface_Erie$CTD.Dissolved.Oxygen.mg.L)#the data is not shown to be normal; reject the null hypothesis of normality in this case
 ```
 
-```{r, include=FALSE}
-#Shapiro-wilk test table formatting
-shapiro.1 <- rbind(shapiro.microcystin, shapiro.Chla, shapiro.DO)
-shapiro<- as.data.frame(shapiro.1)
-
-shapiro <- shapiro %>% 
-  select(!method)
-
-colnames_data <- c("Dissolved Microcystin", "Chlorophyll a", "Dissolved Oxygen")
-
-shapiro$data.name <- 
-  replace(shapiro$data.name,values = colnames_data)
-
-shapiro.10 <- shapiro %>% 
-  mutate_at(vars(1,2),  funs(gsub("[c()W=]", "", .)))
-
-shapiro.10_num <- shapiro.10 %>% 
-  mutate_if(is.character, as.numeric)
-
-shapiro.10_round <- shapiro.10_num %>% 
-  mutate_at(vars(1,2),  funs(round(.,digits = 3)))
-
-colnames(shapiro.10_round) <- c('Statistic','P-Value','Data')
-
-shapiro_reorder <- shapiro.10_round[, c(3, 1, 2)]
-
-```
-
-***Table ###. Shapiro-Wilk Test for Normality Results***
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-gt(shapiro_reorder) %>% 
-  tab_header(
-    title = "Shapiro-Wilk Test Results")
-```
 
 ```{r, include = FALSE}
 #Drop NAs
@@ -425,94 +371,34 @@ bottom_surface_Erie_dropNA_DO <- bottom_surface_Erie %>%
   drop_na(CTD.Dissolved.Oxygen.mg.L)
 ```
 
+
 ```{r, include = FALSE}
 #Microcystin: surface vs bottom
 
-wilcox_microcystin <- wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
+wilcox.test(Dissolved.Microcystin.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_microcystin, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 
-wilcox_microcystin
+```
 
+```{r, include = FALSE}
 #CHLa: surface vs bottom
 
-wilcox_chla <- wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
-
-wilcox_chla
-
-wilcox_DO <- wilcox.test(CTD.Dissolved.Oxygen.mg.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_DO, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
-
-wilcox_DO
+wilcox.test(Extracted.Chlorophyll.a.b5g.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_CHLa, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 ```
 
-```{r, include=FALSE}
-#Wilcoxin Rank Sum test table formatting
-wilcox.1 <- rbind(wilcox_microcystin, wilcox_chla, wilcox_DO)
-wilcox<- as.data.frame(wilcox.1)
+```{r}
+#DO: surface vs bottom
 
-wilcox <- wilcox %>% 
-  select(statistic, p.value, data.name)
-
-colnames_data_w <- c("Dissolved Microcystin", "Chlorophyll a", "Dissolved Oxygen")
-
-wilcox$data.name <- 
-  replace(wilcox$data.name,values = colnames_data_w)
-
-wilcox.10 <- wilcox %>% 
-  mutate_at(vars(1,2),  funs(gsub("[c()W=]", "", .)))
-
-wilcox.10_num <- wilcox.10 %>% 
-  mutate_if(is.character, as.numeric)
-
-wilcox.10_round <- wilcox.10_num %>% 
-  mutate_at(vars(1,2),  funs(round(.,digits = 3)))
-
-colnames(wilcox.10_round) <- c('Statistic','P-Value','Data')
-
-wilcox_reorder <- wilcox.10_round[, c(3, 1, 2)]
-
+wilcox.test(CTD.Dissolved.Oxygen.mg.L ~ Sample.Depth.category, data = bottom_surface_Erie_dropNA_DO, alternative = "less") #Due to nonnormality of the data, a rank sum test was applied
 ```
-***Table ###. Wilcoxin Rank Sum Test for Bottom versus Surface Depths***
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-gt(wilcox_reorder) %>% 
-  tab_header(
-    title = "Wilcoxin Rank Sum Test Results")
-```
-
-When looking at microcystin concentrations at surface and bottom depths, the Wilcoxin Rank Sum test showed a nonsignificant result and thus a failure to reject the null hypothesis which states that microcystin concentrations at surface depth are less than or equal to microcystin concentrations at bottom depth (W = 24800, p-value = 0.1753). Figure ### shows these data. When looking at chlorophyll a concentrations at surface and bottom depths, the Wilcoxin Rank Sum test showed a significant result and a rejection of the null hypothesis which states that chlorophyll a concentrations at surface depth are less than or equal to chlorophyll a concentrations at bottom depth (W = 78212, p-value = 0.0008634). Figure ### shows these data. Lastly, when looking at dissolved oxygen concentrations, the Wilcoxin Rank Sum test showed a significant result and a rejection of the null hypothesis which states that dissolved oxygen concentrations at surface depth are less than or equal to dissolved concentrations at bottom depth (W = 51924, p-value < 2.2e-16). Figure ### shows these data.
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-#Microcystin boxplot
-Microcystin_SB_plot <- ggplot(bottom_surface_Erie_dropNA_microcystin)+ 
-  geom_boxplot(aes(x = Year, y=Dissolved.Microcystin.b5g.L, fill = Sample.Depth.category))+
-  ylim(0,0.75)+
-  labs(y = "Microcystin Concentration (ug/L)", x = "Sample Depth Category", title = "Microcystin Concentration at Surface and Bottom Depths")
-
-print(Microcystin_SB_plot)
-```
-***Figure ###. Microcystin Concentrations at Surface and Bottom Depth for years 2015 through 2018***
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
+```{r}
 #CHLa boxplot: surface vs bottom
 CHLa_SB_plot <- ggplot(bottom_surface_Erie_dropNA_CHLa)+ 
-  geom_boxplot(aes(x = Year, y=Extracted.Chlorophyll.a.b5g.L, fill = Sample.Depth.category))+
+  geom_boxplot(aes(x = Sample.Depth.category, y=Extracted.Chlorophyll.a.b5g.L))+
   ylim(0,100)+
   labs(y = "Extracted Chlorophyll a Concentration (ug/L)", x = "Sample Depth Category", title = "Extracted Chlorophyll a Concentration at Surface and Bottom Depths")
 
 print(CHLa_SB_plot)
 ```
-
-***Figure ###. Chlorophyll a Concentrations at Surface and Bottom Depth for years 2015 through 2018***
-
-```{r, warning = FALSE, meassage = FALSE, echo = FALSE}
-#DO boxplot: surface vs bottom
-DO_SB_plot <- ggplot(bottom_surface_Erie_dropNA_DO)+ 
-  geom_boxplot(aes(x = Year, y=CTD.Dissolved.Oxygen.mg.L, fill = Sample.Depth.category))+
-  labs(y = "Dissolved Oxygen Concentration (mg/L)", x = "Sample Depth Category", title = "Dissolved Oxygen Concentration at Surface and Bottom Depths")
-
-print(DO_SB_plot)
-```
-
-***Figure ###. Dissolved Oxygen Concentrations at Surface and Bottom Depth for years 2015 through 2018***
 
 
 
