@@ -384,6 +384,7 @@ do_hist_2022
 
 To begin exploration of the questions, a summary statistics table (Table 2) was generated to show the number of observations, mean, standard deviation, median, maximum, and minimum values within each year for all variables of interest (i.e., microcystin concentration, chlorophyll a concentration, dissolved oxygen concentration, nitrate/nitrite concentration, dissolved phosphorus, and temperature). This was conducted to evaluate balance within the data regarding the number of observations but also to get a glimpse into trends occurring within given years.
 
+
 ***Table 2. Summary Statistics: Harmful algal bloom and water quality characteristics of Lake Erie 2012 through 2018.***
 
 ```{r, include = FALSE, message = FALSE, warning = FALSE}
