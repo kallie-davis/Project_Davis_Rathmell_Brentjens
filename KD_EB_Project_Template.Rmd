@@ -208,20 +208,23 @@ Erie_Data_2022 <- read.csv("./Data/Processed/Erie_2022_processed.csv")
 
 # Rationale and Research Questions
 
-Harmful algal blooms (HABs) are characterized by rapid algae population growth coupled with toxin production in an aquatic system (NOAA, 2016). In recent history HABs have been shown to be increasing in prevalence with documented observations throughout the U.S. and the world (U.S. National Office for HABs, n.d.). This increased prevalence of HABs poses a threat to both public and ecosystem health (U.S. EPA, 2022a). Generally, HABs are associated with an influx of environmental nutrients into an aquatic system; however, other regional or lake-specific variables such as temperature, physical chemical properties, and lake structure can influence the development of HABs (CDC, 2022). Although HABs have been largely stated to have increased through time, many of these variables are challenging to generalize across water bodies due to the complexity of algal bloom formation. It is for this reason that this report will focus on HAB development in one water body: Lake Erie.  
+Harmful algal blooms (HABs) are characterized by rapid algae population growth coupled with toxin production in an aquatic system (NOAA, 2016). In recent history, HABs have  become more prevalent, with documented observations throughout the U.S. and the world (U.S. National Office for HABs, n.d.). Increased HABs pose a threat to both ecosystem and human health (U.S. EPA, 2022a). Generally, HABs are associated with an influx of nutrients into an aquatic system; however, other regional or lake-specific variables such as temperature, physical chemical properties, and lake structure can influence the development of HABs (CDC, 2022). While there is considerable evidence that HABs have increased over time, it is difficult to determine how water quality variables influence their growth due to large variability across water bodies and the complexity of algal bloom formation. It is for this reason that this report will focus on HAB development in one water body: Lake Erie.  
+ 
 
-Lake Erie has been affected by seasonal HABs since the 1990s (NSF, 2019). Lake Erie is adjacent to multiple metropolitan areas with populations that exceed 50,000 people and provides drinking water for 12 million people (U.S. EPA, 2022b). In 2015 Lake Erie had a bloom which covered over 300 square miles, thus making it one of the largest algal blooms documented in recent history (LEF, n.d.). Algae and toxin production has public health implications for surrounding populations as exposure can occur through recreation and consumption of contaminated drinking water (Dierkes, 2014; U.S. EPA, 2022b). Algal blooms can also create anoxic conditions when algae undergo decomposition in the environment which also influences ecosystem health (CDC, 2022). Due to the historical and current public health and ecosystem prevalence, data collection efforts have been implemented within Lake Erie to aid with forecasting future bloom severity. These data in the western basin are evaluated in this report.
+Lake Erie has been affected by seasonal HABs since the 1990s (NSF, 2019). Lake Erie is adjacent to multiple metropolitan areas with populations that exceed 50,000 people and provides drinking water for 12 million people (U.S. EPA, 2022b). In 2015, Lake Erie had a bloom which covered over 300 square miles, making it one of the largest algal blooms documented in recent history (LEF, n.d.). 
 
-Lake Erie is the shallowest of the great lakes with an average depth of 19 meters (m); the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie is expected to undergo stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). Microcystis is the most common species and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie. Considering the characteristics of Western Lake Erie, this report evaluates the following questions:
+Algae and toxin production has public health implications for surrounding populations as exposure can occur through recreation and consumption of contaminated drinking water (Dierkes, 2014; U.S. EPA, 2022b). Algal blooms can also create anoxic conditions when algae undergo decomposition in the environment, which also influences ecosystem health (CDC, 2022). Due to the historical and current public health and ecosystem prevalence, data collection efforts have been implemented within Lake Erie to aid with forecasting future bloom severity. These data in the western basin are evaluated in this report.
 
-  What are the drivers of harmful algal blooms in western Lake Erie?
+
+Lake Erie is the shallowest of the great lakes with an average depth of 19m; the western portion, which comprises approximately 20% of the lake, has an average depth of 7.4 m and a maximum depth of 19 m (U.S. EPA, 2022b). Western Lake Erie undergoes stratification for a short period of time during the summer months, leading to a warmer surface layer (epilimnion) and cooler bottom layer (hypolimnion; U.S. EPA, 2022b). Nutrient inputs come from a variety of sources which include wastewater treatment plants and agriculture which can influence algal bloom production (Dean, 2022). Microcystis is the most common species and microcystin, a potent hepatotoxin, is the most common toxin documented in HABs in Lake Erie (GLERL, 2019). 
+
+Considering the characteristics of Western Lake Erie, we seek to examine the drivers of harmful algal blooms in the lake. This report evaluates the following questions:
+
+  1. How do chlorophyll a and microcystin concentration change over time?  
+
+  2. Which variables (i.e., temperature, nitrate/nitrite, and/or total dissolved phosphorus) contribute to microcystin production and algal growth (measured by chlorophyll a concentration)?
   
-  1. How does Microcystis and microcystin concentration change over time?
-  
-  2. Which variables (i.e., temperature, nitrate/nitrite, and/or phosphorus) contribute to microcystin production, Microcystis population growth, and dissolved oxygen?
-  
-  3. Are there differences between microcystin, chlorophyll a, or dissolved oxygen concentration at different lake depths?  
-
+  3. Are there differences between microcystin, chlorophyll a, or dissolved oxygen at different lake depths? 
 
 
 \newpage
