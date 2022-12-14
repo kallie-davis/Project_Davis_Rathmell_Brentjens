@@ -1,7 +1,7 @@
 # Project_Davis_Rathmell_Brentjens
 
 ## Summary
-This data was used in the final project for Environmental Data Analytics (ENV 872L) at Duke University, Fall 2022. The data will be evaluated using multiple linear regression, time series analysis, and comparison of means (Wilcoxin Rank Sum) tests. 
+These data were used in the final project for Environmental Data Analytics (ENV 872L) at Duke University, Fall 2022. The data were evaluated using generalized linear modeling, ANOVA, and comparison of means (Wilcoxin Rank Sum) tests. 
 
 ## Investigators
 
@@ -17,20 +17,21 @@ Harmful algal blooms, microcystins, dissolved oxygen, chlorophyll a, nitrate, ni
 
 ## Database Information
 
-The raw data are from Western Lake Erie water quality data collected by NOAA Great Lakes Environmental Research Laboratory (GLERL) between 2012 and 2018 and in 2022. Data was accessed on November 29, 2022 from the following website: https://www.glerl.noaa.gov/res/HABs_and_Hypoxia/habsMon.html 
+The raw data are from Western Lake Erie water quality data collected by  the National Oceanic and Atmospheric Administration Great Lakes Environmental Research Laboratory (NOAA GLERL) between 2012 and 2018 and in 2022. Data was accessed on November 29, 2022 from the following website: https://www.glerl.noaa.gov/res/HABs_and_Hypoxia/habsMon.html 
 
 ## Folder structure, file formats, and naming conventions 
 
 Folder structure
 
-* Code: contains coding files for data wrangling and data analysis
-* Data: contains separate subfolders for raw and processed data
+* Code: contains coding files (RScript and RMarkdown) for data wrangling and data analysis, with separate folders for draft and final code (containing final RMarkdown file)
+* Data: contains separate subfolders for raw and processed data (CSV format)
 * Metadata: contains metadata file for the repository
-* Output: contains knit files (PDF format)
+* Output: contains knit file (PDF format)
 
 ## Metadata
 
 ### Raw Data
+
 lake_erie_habs_field_sampling_2012_2018_v2.csv contains the following parameters:
 
 * Date in format month/day/year; character class
@@ -44,7 +45,7 @@ lake_erie_habs_field_sampling_2012_2018_v2.csv contains the following parameters
 * wind speed measured in knots; character class
 * wave height measured in feet; numeric class
 * weather conditions during sample collection; character class
-* secchi depth measured in meters; character class
+* Secchi depth measured in meters; character class
 * Sample temperature measured in degrees celsius; numeric class
 * CTD temperature measured in degrees celsius (CTD: Refers to an instrument which measures conductivity, temperature, and depth); numeric class
 * CTD specific conductivity measured in microsiemens per meter; numeric class
@@ -70,7 +71,7 @@ lake_erie_habs_field_sampling_2012_2018_v2.csv contains the following parameters
 * total suspended solids measured in milligrams per liter; numeric class
 * volatile suspended solids measured in milligrams per liter; numeric class
 
-2022_WLE_Weekly_Datashare_CSV.csv
+2022_WLE_Weekly_Datashare_CSV.csv contains the following parameters:
 
 * Date in format month/day/year; character class
 * Site is the location where sample was collected; character class
@@ -84,7 +85,7 @@ lake_erie_habs_field_sampling_2012_2018_v2.csv contains the following parameters
 * wind_speed_knots is the wind speed measured in knots; character class
 * Wave_Ht_ft is the wave height measured in feet; numeric class
 * Sky reports  weather conditions during sample collection; character class
-* Secchi_Depth_m is the secchi depth measured in meters; character class
+* Secchi_Depth_m is the Secchi depth measured in meters; character class
 * Temp_C is sample temperature measured in degrees celsius; character class
 * SpCond_uScm-1 is specific conductivity measured in microsiemens per meter; character class
 * BeamAtten_m-1 is beam attenuation measured in meters; character class
@@ -101,7 +102,7 @@ lake_erie_habs_field_sampling_2012_2018_v2.csv contains the following parameters
 
 ### Processed Data
 
-Erie_2012_2018_processed.csv 
+Erie_2012_2018_processed.csv contains the following parameters:
 
 * Date in format month/day/year; character class
 * Site is the location where sample was collected; character class
@@ -121,7 +122,7 @@ Erie_2012_2018_processed.csv
 * Sample.Temperature.b0C is temperature of sample measured in degrees celsius; numeric class
 * CTD.Temperature.b0C is temperature measured by  instrument which measures conductivity, temperature, and depth; numeric class
 
-Erie_2022_processed.csv
+Erie_2022_processed.csv contains the following parameters:
 
 * Date in format month/day/year; character class
 * Depth_category is the sample depth category; character class
@@ -133,19 +134,25 @@ Erie_2022_processed.csv
 
 ## Scripts and code
 
+anova(s).Rmd: RMD file used to conduct ANOVA tests on differences in microcystin and chlorophyll a by month and year
+
+DR_Project_Template.Rmd: Early draft of report
+
+EB_Project_Template.Rmd: RMD file used to add linear modeling code and text to report
+
 erie_habs_data_extended.R: an R code file used for wrangling the raw lake_erie_habs_field_sampling_2012_2018_v2.csv dataset; used to develop preliminary models and plots
 
 exploratory_data_analysis.R: an R code file used for the exploratory data analysis for the report
 
 extended_data_plots.R: an R code file used to create plots using the extended dataset (Erie_2012_2018_processed.csv)
 
-Lake_Erie_GLMs.R: an R code file used to create generalized linear models
+KD_EB_Project_Template.Rmd: RMD file used to compile code and text from multiple RMD files and begin organizing report
 
 KD_Project_Template.Rmd: RMD file used to evaluate sample depth category analyses and compile report preliminarily
 
-timeseries.Rmd: an RMD file used to conduct time series analysis
+Lake_Erie_GLMs.R: an R code file used to create generalized linear models
 
 ## Quality assurance/quality control
 
-Data wrangling and changes to data file were inspected individually by group members.
+Data wrangling and changes to data and output files were inspected individually by group members.
 
