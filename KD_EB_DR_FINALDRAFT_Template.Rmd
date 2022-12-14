@@ -1,9 +1,11 @@
 ---
+title: "An Analysis of the Drivers of Harmful Algal Blooms in Lake Erie"
+author: "Kallie Davis, Dori Rathmell, and Emma Brentjens"
 output:
   pdf_document: default
   html_document: default
-  word_document: default
 ---
+
 \newpage
 \tableofcontents 
 
